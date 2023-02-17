@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>vr editor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- <link rel='stylesheet' type='text/css' media='screen' href='main.css'> -->
+    <script src='render-html.js'></script>
+    <script src='editing-html.js'></script>
+
+    <style>
+      body {
+        -webkit-user-select: none; /* Safari */
+        -ms-user-select: none; /* IE 10 and IE 11 */
+        user-select: none; /* Standard syntax */
+      }
+
+      div.dropTarget.hover {
+        border: solid 1px yellow;
+      }
+      div {
+        border: solid 1px black;
+      }
+
+      div.panel {
+        /* height: 100px; */
+        width: 100px;
+        position: absolute;
+      }
+      div.topPanel {
+        /* height: 100px; */
+        width: 100px;
+        position: relative;
+      }
+
+      div.dropTarget {
+        /* height: 100px; */
+        width: 100px;
+        position: absolute;
+        border: blue 1px solid;
+
+        width: 100%;
+      }
+
+      div.dragHandle {
+        /* height: 100px; */
+        width: 100px;
+        position: absolute;
+        border: green 1px solid;
+      }
+
+      div.delete {
+        /* height: 100px; */
+        width: 20px;
+        position: absolute;
+        border: black 1px solid;
+      }
+
+      div.dragHandle.hover {
+        border: green 3px solid;
+      }
+
+      #menu {
+        display: fixed;
+        left: 350px;
+        top: 0px;
+        width: 200px;
+        height: 200px;
+      }
+
+      #dragy {
+        width: 100px;
+        height: 100px;
+        position: fixed;
+        border: green 1px solid;
+        background-color: white;
+        z-index: 10;
+        display: none;
+      }
+
+      #dragy.overDrop {
+        opacity: 0.1;
+      }
+
+      .tentative {
+        /* background-color: yellow; */
+        border: dashed;
+        opacity: 0.9;
+      }
+    </style>
+
+    <script>
+      const WIDTH_MAIN = "340";
+      const WIDTH_PAGE = "300";
+
+      let drops = [];
+      let drags = [];
+
+      var test_obj = {
+        tentative: true,
+
+        name: "super 1",
+        type: "banner",
+        width: "70%",
+        text: "DROP!",
+      };
+
+      var element_count = 0;
+
+      var component_menu = [
+        {
+          name: "Banner-m1",
+          type: "banner",
+          width: "100%",
+          text: "Banner",
+        },
+        {
+          name: "Header-m2",
+          type: "header",
+          width: "100%",
+          text: "Header",
+        },
+        {
+          name: "Image-m3",
+          type: "image",
+          width: "100%",
+          text: "Image",
+        },
+      ];
+
+      var content_tree = {
+        content: [
+          {
+            name: "page",
+            type: "column",
+            width: WIDTH_PAGE,
+            content: [
+              {
+                name: "header-1",
+                type: "banner",
+                width: "100%",
+                text: "I am Header!",
+              },
+              {
+                name: "main-2",
+                type: "area",
+                width: "100%",
+                text: "<div>I am area2.<br/>Area51.</div>",
+                orientation: "horizontal",
+                content: [
+                  {
+                    name: "content-1",
+                    // type: "banner",
+                    width: "50%",
+                    text: "On the one is done, very cool.",
+                  },
+                  {
+                    name: "content-2",
+                    // type: "area",
+                    width: "50%",
+                    text: "2 for you and me, that's the way its got to be. And so I ask you - are you with me? That is whaat we need to discuss. Noone knows now.",
+                  },
+                ],
+              },
+              {
+                name: "section-1",
+                type: "banner",
+                width: "100%",
+                text: "Section",
+              },
+              {
+                name: "section-2",
+                type: "banner",
+                width: "50%",
+                text: "Offers",
+              },
+              {
+                name: "footer-10",
+                type: "banner",
+                width: "100%",
+                text: "Foot.",
+              },
+            ],
+          },
+        ],
+      };
+
+
+
+      function widthOfAllPixels(content) {
+        //figure out width for each item in group.
+
+        let pxCount = 0;
+        content.forEach((c) => {
+          if (c.width.indexOf("%") < 0) {
+            pxCount += parseInt(c.width);
+          }
+        });
+        return pxCount;
+      }
+
+      window.onload = (event) => {
+        console.log("page is fully loaded");
+        // addElement("first", 60, 200);
+        // addElement("second", 60, 240);
+        topBlock = document.getElementById("editor");
+        dragy = document.getElementById("dragy");
+        menu = document.getElementById("menu");
+
+        renderMenu(menu, component_menu);
+
+        clearRender();
+        renderContent(topBlock, content_tree.content, 100, 0);
+      };
+
+      /*************  DRAGGINGG *****************************/
+      /******************************************/
+      /******************************************/
+
+      let topBlock;
+      let dragy;
+
+      let x = 0;
+      let y = 0;
+      let isDragging = false;
+
+      var activeDrop = null;
+      var activeDrag = null;
+      var idOfDropTarget = null;
+      var draggedBlockConfig = null;
+
+      let dragged_parentArray = null;
+      let dragged_index = null;
+
+      // function drawPanel() {}
+    </script>
+  </head>
+  <body>
+    <h1>Editor</h1>
+    <div id="editor" class="topPanel">STARTER CONTENT.</div>
+    <div id="menu" class="topPanel">MENU.</div>
+    <div id="dragy">DRAGY</div>
+  </body>
+</html>

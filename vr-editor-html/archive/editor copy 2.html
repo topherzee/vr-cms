@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>vr editor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- <link rel='stylesheet' type='text/css' media='screen' href='main.css'> -->
+    <!-- <script src='main.js'></script> -->
+
+    <style>
+
+body {
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
+}
+
+      div.dropTarget.hover{
+        border: solid 1px yellow;
+      }
+      div {
+        border: solid 1px black;
+      }
+
+      div.panel {
+        /* height: 100px; */
+        width: 100px;
+        position: fixed;
+      }
+
+      div.dropTarget {
+        /* height: 100px; */
+        width: 100px;
+        position: absolute;
+        border:blue 1px solid;
+      
+        width: 100%;
+      }
+
+      #dragy{
+        width: 100px;
+        height: 100px;
+        position: fixed;
+        border:green 1px solid;
+        background-color: green;
+        z-index: 10;
+      }
+    </style>
+
+    <script>
+      const WIDTH_MAIN = "340";
+      const WIDTH_PAGE = "300";
+
+      let dropTargets = [];
+
+      var test_obj = {
+                name: "section 3",
+                type: "banner",
+                width: "70%",
+                text: "DROP!",
+              }
+
+      var content_obj = {
+        content: [
+          {
+            name: "page",
+            type: "column",
+            width: WIDTH_PAGE,
+            content: [
+              {
+                name: "header",
+                type: "banner",
+                width: "100%",
+                text: "I am Header!",
+              },
+              {
+                name: "main",
+                type: "area",
+                width: "100%",
+                text: "I am area2.",
+                orientation: "horizontal",
+                content: [
+                  {
+                    name: "content-1",
+                    // type: "banner",
+                    width: "50%",
+                    text: "On the one is done, very cool.",
+                  },
+                  {
+                    name: "content-2",
+                    // type: "area",
+                    width: "50%",
+                    text: "2 for you and me, that's the way its got to be. And so I ask you - are you with me?",
+                  },
+                ],
+              },
+              {
+                name: "section 1",
+                type: "banner",
+                width: "100%",
+                text: "Section",
+              },  {
+                name: "section 2",
+                type: "banner",
+                width: "50%",
+                text: "Offers",
+              }, {
+                name: "footer",
+                type: "banner",
+                width: "100%",
+                text: "Foot.",
+              },
+            ],
+          },
+        ],
+      };
+
+      //Should they be overlayed? 
+      //Should they be inside the element?
+      function addDropTargets(id, x, y, width, height, text, parent, orientation){
+
+        var horiz = (orientation && orientation=="horizontal")
+        var targets;
+        if (horiz){
+            // targets = ["left","right"]
+            targets = ["right"]
+        }else{
+            // targets = ["top","bottom"]
+            targets = ["bottom"]
+        }
+        
+        targets.forEach((t) => {
+            const newDiv = document.createElement("div");
+            
+            parent.appendChild(newDiv)
+            newDiv.setAttribute("id", id + "_drop");
+            newDiv.className = "dropTarget";
+            if (t === "top"){
+                newDiv.style.top = "0px"
+                newDiv.innerHTML = "DROP TOP.";
+            } else if (t === "bottom"){
+                newDiv.style.bottom = "0px"
+                newDiv.innerHTML = "DROP BOTTOM3.";
+            }else if (t === "left"){
+                newDiv.style.top = "0px"
+                newDiv.style.left = "0px"
+                newDiv.style.width = "10px"
+                newDiv.style.height = "100%"
+                newDiv.innerHTML = "L.";
+            }else if (t === "right"){
+                newDiv.style.top = "0px"
+                newDiv.style.right = "0px"
+                newDiv.style.height = "100%"
+                newDiv.style.width = "10px"
+                newDiv.innerHTML = "R.";
+            }
+
+            dropTargets.push(newDiv)
+        
+        });
+
+      }
+
+      function addElement(id, x, y, width, height, text, orientation, parentArray) {
+        const newDiv = document.createElement("div");
+        //   const newContent = document.createTextNode(text||"-");
+        //   newDiv.appendChild(newContent);
+        newDiv.innerHTML = text || "-";
+        const currentDiv = document.getElementById("editor");
+        // document.body.insertBefore(newDiv, currentDiv);
+currentDiv.appendChild(newDiv)
+        newDiv.setAttribute("id", id);
+        newDiv.className = "panel";
+        newDiv.style.left = x + "px";
+        newDiv.style.top = y + "px";
+
+        newDiv.style.width = width + "px"
+
+        newDiv.parentArray = parentArray;
+
+        addDropTargets(id, x, y, width, height, text, newDiv, orientation)
+
+        return newDiv.offsetHeight;
+      }
+
+      function renderItemContent(c, x, y, width, orientation, parentArray) {
+        let type = c.type;
+        let innerHTML = "";
+        if (type === "banner") {
+          innerHTML = "<h1>" + c.text + "</h1>";
+        } else {
+          innerHTML = c.text;
+        }
+
+        //var width = c.width;
+        var height = c.height;
+        var height = addElement(c.name, x, y, width, height, innerHTML,orientation, parentArray);
+        
+        return height;
+      }
+
+      function widthOfAllPixels(content){
+        //figure out width for each item in group.
+
+        let pxCount = 0;
+        content.forEach((c) => {
+          if (c.width.indexOf('%') < 0) {
+            pxCount += parseInt(c.width);
+          }
+        });
+        return pxCount
+      }
+
+      //p = parent.
+      function renderContent(content, x, y, width_to_share, orientation) {
+        console.log("renderContent ");
+        x = 0;
+
+        var horiz = (orientation && orientation=="horizontal")
+        console.log("horiz:" + horiz)
+
+        //Get pixels and subtract that from rest
+        var width_for_percent = width_to_share - widthOfAllPixels(content);
+
+        var maxHeight = 0; //Need to find max height of any of these items.
+        content.forEach((c) => {
+
+          //Width: Change percents to pixels.
+          let width = 0;
+          if (c.width.indexOf('%') < 1) {
+            width = c.width;
+          }else{
+            let percent = parseInt(c.width.replace('%',''))
+            width = width_for_percent * percent / 100;
+            console.log("width: " + width)
+          }
+
+          height = renderItemContent(c, x, y, width,orientation, content);
+          if (horiz){
+            x += (width + 10)
+          }else{
+            y += (height + 10);
+          }
+          
+          //Recursion
+          if (c.content) {
+            var previousY = y;
+            //when do we set x to 0 again? (how do we zoom out)
+            y = renderContent(c.content, x, y, width, c.orientation);
+            var bump = y - previousY;
+            
+          }
+          //TODO Ensure y position of next row - takes these into account.
+          //Basically we need the tallest hight of any of the items.
+          maxHeight = Math.max(maxHeight, height)
+
+        }); //loop content array.
+
+        if (horiz){
+            y += (maxHeight+10)
+        }
+
+        return y;
+      }
+
+      function clearRender(){
+        
+        const currentDiv = document.getElementById("editor");
+        // currentDiv.innerHTML = "";
+        currentDiv.replaceChildren();
+        //currentDiv.remove();
+      }
+
+      window.onload = (event) => {
+        console.log("page is fully loaded");
+        // addElement("first", 60, 200);
+        // addElement("second", 60, 240);
+        renderContent(content_obj.content, 100, 100);
+      };
+
+      // When true, moving the mouse draws on the canvas
+let isDrawing = false;
+let x = 0;
+let y = 0;
+
+// const myPics = document.getElementById('myPics');
+// const context = myPics.getContext('2d');
+
+// event.offsetX, event.offsetY gives the (x,y) offset from the edge of the canvas.
+
+// Add the event listeners for mousedown, mousemove, and mouseup
+window.addEventListener('mousedown', (e) => {
+  x = e.offsetX;
+  y = e.offsetY;
+  isDrawing = true;
+});
+
+var activeTarget = null;
+
+function startHover(t){
+  console.log("startHover")
+  t.classList.add("hover");
+  var id = t.getAttribute("id").split('_')[0]
+  console.log("id: " + id)
+  var item = document.getElementById(id)
+  var parentArray = item.parentArray;
+  // console.log("pa: " + parentArray)
+  var i = parentArray.findIndex((c) => c.name == id)
+  console.log("i: " + i)
+  parentArray.splice(i+1,0 ,test_obj)
+
+  clearRender()
+  renderContent(content_obj.content, 100, 100);
+
+}
+function stopHover(t){
+  console.log("stopHover")
+  t.classList.remove("hover");
+}
+
+function checkForTargetHover(){
+  var hoverTarget = null;
+
+  //scan
+  dropTargets.forEach((t) => {
+    // t.classList.remove("hover");
+    var r = t.getBoundingClientRect();
+    if (x >= r.left && x <= r.right){
+      if (y >= r.top && y <= r.bottom){
+        // console.log("c: X" + r.left)
+        console.log("got it")
+        hoverTarget = t;
+      }
+    }
+    
+  })
+
+  if (hoverTarget != null){
+    if (activeTarget == null){
+      //start targeting this
+      startHover(hoverTarget);
+      activeTarget = hoverTarget
+    }
+ 
+  }else{
+    if (activeTarget != null){
+      //start targeting this
+      stopHover(activeTarget);
+      activeTarget = null;
+    }
+  }
+
+}
+
+window.addEventListener('mousemove', (e) => {
+  if (isDrawing) {
+    //drawLine(context, x, y, e.offsetX, e.offsetY);
+    x = e.offsetX;
+    y = e.offsetY;
+    
+    x = e.pageX;
+    y = e.pageY;
+    
+    let element = document.getElementById("dragy")
+    element.style.top = y + "px"
+    element.style.left = x + "px"
+
+    checkForTargetHover();
+  }
+});
+
+window.addEventListener('mouseup', (e) => {
+  if (isDrawing) {
+    //drawLine(context, x, y, e.offsetX, e.offsetY);
+    x = 0;
+    y = 0;
+    isDrawing = false;
+  }
+});
+
+      function drawPanel() {}
+    </script>
+  </head>
+  <body>
+    <h1>Editor</h1>
+    <div id="editor">STARTER CONTENT.</div>
+    <div id="dragy">DRAGY</div>
+  </body>
+</html>
