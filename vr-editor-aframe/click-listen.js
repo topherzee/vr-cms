@@ -5,6 +5,7 @@ let desktop = false;
 
 let hoverEl = null;
 let hoverDropEl = null;
+let is_dragging = false;
 
 function getIntersectedItemWithClass(that, className) {
   let els = that.components.raycaster.intersectedEls;
@@ -26,23 +27,16 @@ AFRAME.registerComponent("mover", {
     this.setColors = this.setColors.bind(this);
 
     this.el.addEventListener("raycaster-intersection", function (event) {
-      if (this.is_dragging) {
+      if (is_dragging) {
         // check for droptarget.
         console.log("intersect while dragging: ");
-        let dropEl = getIntersectedItemWithClass(this, "droptarget");
-        if (dropEl) {
-          console.log("drop: ", dropEl.id);
-          dropEl.setAttribute("material", "color", "#9f9");
-          hoverDropEl = dropEl;
-        } else {
-          console.log("NO DROPP");
-          hoverDropEl && hoverDropEl.setAttribute("material", "color", "#999");
-        }
+        let el = getIntersectedItemWithClass(this, "droptarget");
+        that.setDropHover(el);
       } else {
         // check for movable.
         let el = getIntersectedItemWithClass(this, "movable");
         //let el = this.components.raycaster.intersectedEls[0] || null;
-        console.log("mover intersect. Top: ", el.id); //event.detail.intersection.point);
+        console.log("intersect. Top: ", el.id); //event.detail.intersection.point);
         that.setHover(el);
       }
     });
@@ -50,20 +44,16 @@ AFRAME.registerComponent("mover", {
     this.el.addEventListener(
       "raycaster-intersection-cleared",
       function (event) {
-        if (this.is_dragging) {
-          let dropEl = getIntersectedItemWithClass(this, "droptarget");
-          if (!dropEl) {
-            //stop hover effect.
-            hoverDropEl &&
-              hoverDropEl.setAttribute("material", "color", "#999");
-          }
-        } else {
-          // let el = this.components.raycaster.intersectedEls[0] || null;
-          let el = getIntersectedItemWithClass(this, "movable");
-          let id = el ? el.id : "nothing";
-          console.log("mover cleared. Top: ", id); //event.detail.intersection.point);
-          that.setHover(el);
-        }
+        // console.log("cleared while dragging: ");
+        //do we need thiss? TODO
+        let dropEl = getIntersectedItemWithClass(this, "droptarget");
+        that.setDropHover(dropEl);
+
+        // let el = this.components.raycaster.intersectedEls[0] || null;
+        let el = getIntersectedItemWithClass(this, "movable");
+        let id = el ? el.id : "nothing";
+        console.log("mover cleared. Top: ", id); //event.detail.intersection.point);
+        that.setHover(el);
       }
     );
 
@@ -71,7 +61,7 @@ AFRAME.registerComponent("mover", {
       console.log("mousedown()");
 
       if (hoverEl) {
-        this.is_dragging = true;
+        is_dragging = true;
         // hoverEl.setAttribute("material", "emmisive", "#000");
         // hoverEl.setAttribute("material", "color", "pink");
         hoverEl.setAttribute("material", "opacity", 0.5);
@@ -90,15 +80,17 @@ AFRAME.registerComponent("mover", {
 
     this.el.addEventListener("mouseup", function (evt) {
       console.log("mouseup()");
-      this.is_dragging = false;
+      is_dragging = false;
+
+      if (hoverDropEl) {
+      }
+      that.setDropHover(null);
 
       if (hoverEl) {
         hoverEl.setAttribute("material", "opacity", 1.0);
 
         let s = document.getElementById("scene");
         let s2 = s.object3D;
-        //console.log("d: ", d);
-        //.attach(this.el.object3D);
         s2.attach(hoverEl.object3D);
         console.log("stop drag");
       } else {
@@ -113,7 +105,7 @@ AFRAME.registerComponent("mover", {
   setHover: function (el) {
     console.log("setHover() 1");
 
-    if (this.el.is_dragging) {
+    if (is_dragging) {
       return;
     }
 
@@ -135,6 +127,27 @@ AFRAME.registerComponent("mover", {
 
       el.setAttribute("material", "color", "green");
       hoverEl = el;
+    }
+  },
+
+  setDropHover: function (el) {
+    console.log("setDropHover() 1");
+
+    //cleaar the old one
+    if (hoverDropEl) {
+      // hoverEl.setAttribute("material", "emmisive", "#000");
+      hoverDropEl.setAttribute("material", "color", "#999");
+      hoverDropEl = null;
+    }
+
+    if (el) {
+      console.log("drop: ", el.id);
+      el.setAttribute("material", "color", "#9f9");
+      hoverDropEl = el;
+    } else {
+      // console.log("NO DROPP");
+      // hoverDropEl && hoverDropEl.setAttribute("material", "color", "#999");
+      // hoverDropEl = null;
     }
   },
 
