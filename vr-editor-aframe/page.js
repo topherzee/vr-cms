@@ -11,10 +11,13 @@ function addDropTarget(parentEl, width) {
   targetEl.setAttribute("rotation", { x: 0, y: 0, z: 0 });
 
   targetEl.setAttribute("material", {
-    color: "#9f9",
+    color: "#999",
     side: "double",
     shader: "flat",
   });
+
+  targetEl.setAttribute("id", parentEl.id + "-droptarget");
+  targetEl.classList.add("droptarget");
 
   parentEl.appendChild(targetEl);
 }
@@ -65,6 +68,7 @@ function renderBlock(block, x, y, z, width, orientation) {
   entityEl.setAttribute("position", { x: x, y: y, z: z });
   entityEl.setAttribute("rotation", { x: 0, y: 0, z: 0 });
   entityEl.setAttribute("data-managed", true);
+  entityEl.setAttribute("id", block.name);
 
   entityEl.classList.add("movable");
 
@@ -279,12 +283,13 @@ var content_tree = {
     //   type: "column",
     //   width: WIDTH_PAGE,
     //   content: [
-    // {
-    //   name: "header-1",
-    //   type: "banner",
-    //   width: "100%",
-    //   text: "I am Header!",
-    // },
+
+    {
+      name: "header-1",
+      type: "banner",
+      width: "100%",
+      text: "I am Header!",
+    },
     {
       name: "main-2",
       type: "area",
@@ -306,18 +311,18 @@ var content_tree = {
         },
       ],
     },
-    // {
-    //   name: "section-1",
-    //   type: "banner",
-    //   width: "100%",
-    //   text: "Section",
-    // },
-    // {
-    //   name: "section-2",
-    //   type: "banner",
-    //   width: "50%",
-    //   text: "Offers",
-    // },
+    {
+      name: "section-1",
+      type: "banner",
+      width: "100%",
+      text: "Section",
+    },
+    {
+      name: "section-2",
+      type: "banner",
+      width: "50%",
+      text: "Offers",
+    },
 
     // {
     //   name: "main-3",

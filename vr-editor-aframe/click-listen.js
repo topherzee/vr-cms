@@ -4,6 +4,20 @@
 let desktop = false;
 
 let hoverEl = null;
+let hoverDropEl = null;
+
+function getIntersectedItemWithClass(that, className) {
+  let els = that.components.raycaster.intersectedEls;
+  let dropEl = null;
+  for (let i = 0; i < els.length; i++) {
+    let el = els[i];
+    if (el.classList.contains(className)) {
+      dropEl = el;
+      break;
+    }
+  }
+  return dropEl;
+}
 
 AFRAME.registerComponent("mover", {
   init: function () {
@@ -12,27 +26,55 @@ AFRAME.registerComponent("mover", {
     this.setColors = this.setColors.bind(this);
 
     this.el.addEventListener("raycaster-intersection", function (event) {
-      let el = this.components.raycaster.intersectedEls[0] || null;
-      console.log("mover intersect. Top: ", el.id); //event.detail.intersection.point);
-      that.setHover(el);
+      if (this.is_dragging) {
+        // check for droptarget.
+        console.log("intersect while dragging: ");
+        let dropEl = getIntersectedItemWithClass(this, "droptarget");
+        if (dropEl) {
+          console.log("drop: ", dropEl.id);
+          dropEl.setAttribute("material", "color", "#9f9");
+          hoverDropEl = dropEl;
+        } else {
+          console.log("NO DROPP");
+          hoverDropEl && hoverDropEl.setAttribute("material", "color", "#999");
+        }
+      } else {
+        // check for movable.
+        let el = getIntersectedItemWithClass(this, "movable");
+        //let el = this.components.raycaster.intersectedEls[0] || null;
+        console.log("mover intersect. Top: ", el.id); //event.detail.intersection.point);
+        that.setHover(el);
+      }
     });
 
     this.el.addEventListener(
       "raycaster-intersection-cleared",
       function (event) {
-        let el = this.components.raycaster.intersectedEls[0] || null;
-        let id = el ? el.id : "nothing";
-        console.log("mover cleared. Top: ", id); //event.detail.intersection.point);
-        that.setHover(el);
+        if (this.is_dragging) {
+          let dropEl = getIntersectedItemWithClass(this, "droptarget");
+          if (!dropEl) {
+            //stop hover effect.
+            hoverDropEl &&
+              hoverDropEl.setAttribute("material", "color", "#999");
+          }
+        } else {
+          // let el = this.components.raycaster.intersectedEls[0] || null;
+          let el = getIntersectedItemWithClass(this, "movable");
+          let id = el ? el.id : "nothing";
+          console.log("mover cleared. Top: ", id); //event.detail.intersection.point);
+          that.setHover(el);
+        }
       }
     );
 
     this.el.addEventListener("mousedown", function (evt) {
       console.log("mousedown()");
-      this.is_dragging = true;
+
       if (hoverEl) {
+        this.is_dragging = true;
         // hoverEl.setAttribute("material", "emmisive", "#000");
-        hoverEl.setAttribute("material", "color", "pink");
+        // hoverEl.setAttribute("material", "color", "pink");
+        hoverEl.setAttribute("material", "opacity", 0.5);
 
         // let c = document.getElementById("cursor");
         let c2 = this.object3D;
@@ -48,17 +90,10 @@ AFRAME.registerComponent("mover", {
 
     this.el.addEventListener("mouseup", function (evt) {
       console.log("mouseup()");
-      //lastIndex = (lastIndex + 1) % COLORS.length;
-      //this.setAttribute("material", "color", COLORS[lastIndex]);
-
       this.is_dragging = false;
-      // if (evt.detail.intersection) {
-      //   console.log("upp: ", evt.detail.intersection.point);
-      // }
-      // that.setColor();
+
       if (hoverEl) {
-        // hoverEl.setAttribute("material", "emmisive", "#000");
-        hoverEl.setAttribute("material", "color", hoverColor);
+        hoverEl.setAttribute("material", "opacity", 1.0);
 
         let s = document.getElementById("scene");
         let s2 = s.object3D;

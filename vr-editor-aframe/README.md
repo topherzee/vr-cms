@@ -1,3 +1,11 @@
+RUN IT:
+To Start
+http-server -S -C cert.pem
+
+Go to chrome://inspect#devices
+adb devices
+
+
 How the Dragging works in 3D:
 
 Component called "mover".
@@ -9,7 +17,10 @@ HOVER
 Listens for "raycaster-intersection" and "raycaster-intersection-cleared".
 On either event, get the current first intersected element and call "setHover()"
 
-setHover() does nothing if "is_dragging", otherwise it 
+setHover() 
+If "is_dragging" - then try to detect when raycaster is on a DROP TARGET.
+
+IF sethover is not "is_dragging"
 * clears out hoverEl, if something was being hoverd - sets the color back.
 * sets "hoverEl" to the element being raycast intersected.
 
@@ -20,6 +31,8 @@ Listens for "mousedown" and "mouseup" (Which also captures 'laser' conroller tri
 * mouseup: 
     * if "hoverEl" is set, then set color back and attach to scene. (BUT: should attach to new parent.)
     * if "hoverEl" is not set... then check raycaster because we might be on something now.
+
+
 
 
 Alternatives to browsersync which appeaars to have issues. 
