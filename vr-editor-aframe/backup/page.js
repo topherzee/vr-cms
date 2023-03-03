@@ -1,24 +1,3 @@
-let DROP_WIDTH = 0.08; //meters
-
-function addDropTarget(parentEl, width) {
-  // console.log(" addDropTarget:");
-  var targetEl = document.createElement("a-entity");
-  var w = width - 0.03;
-  setGeoPlane(targetEl, w, DROP_WIDTH);
-
-  let y = parentEl.height / 2 - DROP_WIDTH / 2;
-  targetEl.setAttribute("position", { x: 0, y: -y, z: 0.01 });
-  targetEl.setAttribute("rotation", { x: 0, y: 0, z: 0 });
-
-  targetEl.setAttribute("material", {
-    color: "#9f9",
-    side: "double",
-    shader: "flat",
-  });
-
-  parentEl.appendChild(targetEl);
-}
-
 function buildText(block, entityEl, width, height) {
   setGeoPlane(entityEl, width, height);
 
@@ -66,7 +45,7 @@ function renderBlock(block, x, y, z, width, orientation) {
   entityEl.setAttribute("rotation", { x: 0, y: 0, z: 0 });
   entityEl.setAttribute("data-managed", true);
 
-  entityEl.classList.add("movable");
+  entityEl.setAttribute("cursor-listener", true);
 
   if (type == "text" || type == "banner") {
     if (containsLink(block)) {
@@ -84,9 +63,6 @@ function renderBlock(block, x, y, z, width, orientation) {
   //   return false;
   // }
   // return true;
-
-  addDropTarget(entityEl, width);
-
   return entityEl;
 }
 
@@ -199,9 +175,6 @@ function widthOfAllPixels(content) {
   return pxCount;
 }
 
-let PAGE_Y = 1;
-let PAGE_X = 0;
-let PAGE_Z = -2;
 AFRAME.registerComponent("page", {
   init: function () {
     //this.originalRotation = this.el.object3D.rotation.y;
@@ -212,9 +185,9 @@ AFRAME.registerComponent("page", {
     //renderBlock(test_obj, 0, sceneEl, 0);
 
     let parentBlock = sceneEl;
-    let x = PAGE_X;
-    let y = PAGE_Y;
-    let z = PAGE_Z;
+    let x = 0;
+    let y = 2;
+    let z = -2;
     let width_to_share = 1.0;
     let orientation = "";
 
@@ -279,12 +252,12 @@ var content_tree = {
     //   type: "column",
     //   width: WIDTH_PAGE,
     //   content: [
-    // {
-    //   name: "header-1",
-    //   type: "banner",
-    //   width: "100%",
-    //   text: "I am Header!",
-    // },
+    {
+      name: "header-1",
+      type: "banner",
+      width: "100%",
+      text: "I am Header!",
+    },
     {
       name: "main-2",
       type: "area",
@@ -306,52 +279,24 @@ var content_tree = {
         },
       ],
     },
-    // {
-    //   name: "section-1",
-    //   type: "banner",
-    //   width: "100%",
-    //   text: "Section",
-    // },
+    {
+      name: "section-1",
+      type: "banner",
+      width: "100%",
+      text: "Section",
+    },
     // {
     //   name: "section-2",
     //   type: "banner",
     //   width: "50%",
     //   text: "Offers",
     // },
-
-    // {
-    //   name: "main-3",
-    //   type: "area",
-    //   width: "100%",
-    //   text: "<div>MAIN 3</div>",
-    //   orientation: "horizontal",
-    //   content: [
-    //     {
-    //       name: "content-A",
-    //       type: "banner",
-    //       width: "33%",
-    //       text: "A A A",
-    //     },
-    //     {
-    //       name: "content-B",
-    //       type: "banner",
-    //       width: "33%",
-    //       text: "B B B",
-    //     },
-    //     {
-    //       name: "content-C",
-    //       type: "banner",
-    //       width: "33%",
-    //       text: "C C C",
-    //     },
-    //   ],
-    // },
-    // {
-    //   name: "footer-10",
-    //   type: "banner",
-    //   width: "100%",
-    //   text: "Foot.",
-    // },
+    {
+      name: "footer-10",
+      type: "banner",
+      width: "100%",
+      text: "Foot.",
+    },
     // ],
     // },
   ],

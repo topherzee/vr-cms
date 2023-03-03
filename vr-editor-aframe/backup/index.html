@@ -1,0 +1,54 @@
+<html>
+  <head>
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script src="page.js"></script>
+    <script src="click-listen.js"></script>
+    <!-- <script src="https://unpkg.com/aframe-click-drag-component"></script> -->
+    <!-- <script>
+        registerAframeClickDragComponent(window.AFRAME);
+      </script> -->
+      
+      <script>
+        AFRAME.registerComponent("remove-cursor", {
+  init: function() {
+   var cursor = document.getElementById("cursor")
+
+   const supportsXR = 'xr' in window.navigator;
+   
+   if (supportsXR) {
+    cursor.setAttribute("visible", false);
+
+      //or just cursor.parentNode.removeChild(cursor)
+      //this.el.sceneEl.setAttribute("cursor","rayOrigin","mouse")
+   }
+ }
+})
+      </script>
+  </head>
+  <body>
+    <a-scene id="scene">
+      <a-box id="box1" position="-1 0.5 -3" rotation="0 45 0" color="#4CC3D9" page></a-box>
+      <a-sphere id="sphere1" position="0 0.5 -5" radius="0.5" color="#EF2D5E"></a-sphere>
+      <a-cylinder id="cyl1" position="0 0 -3" cursor-listener radius="0.5" height="1.5" color="#FFC65D"></a-cylinder>
+      <a-plane position="0 0 -4" rotation="-90 0 0" width="4" height="4" color="#7BC8A4"></a-plane>
+      <a-sky color="#111111"></a-sky>
+
+      <a-entity laser-controls="hand: left" pointer x-button-listener></a-entity>
+      <a-entity laser-controls="hand: right" pointer x-button-listener></a-entity>
+
+      <a-entity id="box2" cursor-listener geometry="primitive: box" material="color: blue"></a-entity>
+
+      <a-entity camera look-controls wasd-controls remove-cursor>
+        <a-entity id="cursor" cursor="fuse: true; fuseTimeout: 1000"
+                  position="0 0 -1"
+                  rayOrigin: mouse
+                  geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
+                  material="color: black; shader: flat">
+        </a-entity>
+      </a-entity>
+      
+      <a-entity id="box" position="-1 1.5 -2" cursor-listener geometry="primitive: box" material="color: blue"></a-entity>
+
+    </a-scene>
+  </body>
+</html>
