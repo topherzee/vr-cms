@@ -25,18 +25,19 @@ AFRAME.registerComponent("mover", {
     let that = this;
     this.setHover = this.setHover.bind(this);
     this.setColors = this.setColors.bind(this);
+    this.startDrag = this.startDrag.bind(this);
 
     this.el.addEventListener("raycaster-intersection", function (event) {
       if (is_dragging) {
         // check for droptarget.
-        console.log("intersect while dragging: ");
+        //console.log("intersect while dragging: ");
         let el = getIntersectedItemWithClass(this, "droptarget");
-        that.setDropHover(el);
+        that.checkForDropHover(el);
       } else {
         // check for movable.
         let el = getIntersectedItemWithClass(this, "movable");
         //let el = this.components.raycaster.intersectedEls[0] || null;
-        console.log("intersect. Top: ", el.id); //event.detail.intersection.point);
+        // console.log("intersect. Top: ", el.id); //event.detail.intersection.point);
         that.setHover(el);
       }
     });
@@ -47,7 +48,7 @@ AFRAME.registerComponent("mover", {
         // console.log("cleared while dragging: ");
         //do we need thiss? TODO
         let dropEl = getIntersectedItemWithClass(this, "droptarget");
-        that.setDropHover(dropEl);
+        that.checkForDropHover(dropEl);
 
         // let el = this.components.raycaster.intersectedEls[0] || null;
         let el = getIntersectedItemWithClass(this, "movable");
@@ -61,18 +62,7 @@ AFRAME.registerComponent("mover", {
       console.log("mousedown()");
 
       if (hoverEl) {
-        is_dragging = true;
-        // hoverEl.setAttribute("material", "emmisive", "#000");
-        // hoverEl.setAttribute("material", "color", "pink");
-        hoverEl.setAttribute("material", "opacity", 0.5);
-
-        // let c = document.getElementById("cursor");
-        let c2 = this.object3D;
-        // console.log("c: ", c2);
-        let d = hoverEl.object3D;
-        // console.log("d: ", d);
-        c2.attach(d);
-        console.log("start drag");
+        that.startDrag(this, null);
       }
 
       //that.setHover(hoverEl);
@@ -83,13 +73,19 @@ AFRAME.registerComponent("mover", {
       is_dragging = false;
 
       if (hoverDropEl) {
+        //handle drop on target!
+        //add item here.
       }
-      that.setDropHover(null);
+
+      //TODO - otherwise dragged thing should go back home.
+
+      that.checkForDropHover(null);
 
       if (hoverEl) {
         hoverEl.setAttribute("material", "opacity", 1.0);
 
-        let s = document.getElementById("scene");
+        // let s = document.getElementById("scene");
+        let s = document.getElementById("pageHolder");
         let s2 = s.object3D;
         s2.attach(hoverEl.object3D);
         console.log("stop drag");
@@ -101,9 +97,86 @@ AFRAME.registerComponent("mover", {
       }
     });
   },
+  startDrag: function (controlObject) {
+    console.log("startDrag() 1");
+
+    is_dragging = true;
+    hoverEl.setAttribute("material", "opacity", 0.5);
+    let dragParent = document.getElementById("scene");
+
+    let c2 = controlObject.object3D;
+    let d = hoverEl.object3D;
+    c2.attach(d);
+    console.log("start drag() 2");
+
+    //remove from content tree
+    // debugger;
+    t = hoverEl;
+    var id = t.getAttribute("id").split("_")[0];
+    console.log("hover id: " + id);
+    var item = document.getElementById(id);
+
+    var parentArray = item.parentArray;
+    var i = parentArray.findIndex((c) => c.name == id);
+    console.log("i: " + i);
+
+    draggedBlockConfig = parentArray[i];
+
+    draggedBlockConfig.tentative = true;
+
+    t.mode = "content-mode";
+
+    //remove the item from the configuration.
+    if (t.mode == "content-mode") {
+      // Take out of array.
+      parentArray.splice(i, 1);
+    }
+
+    //Prep so we can put it back to original location if need be:
+    dragged_parentArray = parentArray;
+    dragged_index = i;
+
+    //Clone to new element.
+
+    let el = hoverEl;
+    let position = el.object3D.position;
+    let rotation = el.object3D.rotation;
+    let scale = el.object3D.scale;
+
+    // Create new element, copy the current one on it
+    let newEl = this.cloneElement(el);
+    // Listener for location, rotation,... when the new el is laded
+    relocate = function () {
+      newEl.object3D.location = location;
+      newEl.object3D.rotation = rotation;
+      newEl.object3D.scale = scale;
+    };
+    newEl.addEventListener("loaded", relocate, { once: true });
+    hoverEl = newEl;
+
+    controlObject.appendChild(newEl);
+    el.parentElement.removeChild(el);
+
+    clearRender();
+    renderPage();
+    //renderContent(topBlock, content_tree.content, 100, 0);
+  },
+  cloneElement: function (el) {
+    let newEl = document.createElement(el.tagName);
+    if (el.hasAttributes()) {
+      let attrs = el.attributes;
+      for (var i = attrs.length - 1; i >= 0; i--) {
+        let attrName = attrs[i].name;
+        let attrVal = el.getAttribute(attrName);
+        newEl.setAttribute(attrName, attrVal);
+      }
+    }
+    newEl.parentArray = el.parentArray;
+    return newEl;
+  },
 
   setHover: function (el) {
-    console.log("setHover() 1");
+    //console.log("setHover() 1");
 
     if (is_dragging) {
       return;
@@ -130,24 +203,21 @@ AFRAME.registerComponent("mover", {
     }
   },
 
-  setDropHover: function (el) {
-    console.log("setDropHover() 1");
-
-    //cleaar the old one
+  //Hovering on a drop target.
+  checkForDropHover: function (el) {
     if (hoverDropEl) {
-      // hoverEl.setAttribute("material", "emmisive", "#000");
-      hoverDropEl.setAttribute("material", "color", "#999");
-      hoverDropEl = null;
+      //Currently hovering
+      //Did we drop it?
+      if (!el) {
+        //yes
+
+        stopDropHover(hoverEl);
+      }
     }
 
-    if (el) {
-      console.log("drop: ", el.id);
-      el.setAttribute("material", "color", "#9f9");
-      hoverDropEl = el;
-    } else {
-      // console.log("NO DROPP");
-      // hoverDropEl && hoverDropEl.setAttribute("material", "color", "#999");
-      // hoverDropEl = null;
+    // if not currently hovering - and just moved over a drop target
+    if (!hoverDropEl && el) {
+      startDropHover(el);
     }
   },
 
@@ -155,3 +225,57 @@ AFRAME.registerComponent("mover", {
     console.log("setColors(): ");
   },
 });
+
+function startDropHover(el) {
+  if (new Date().getTime() < time_last_add + TIME_DELAY) {
+    return;
+  }
+  console.log("startDropHover: ", el.id);
+  el.setAttribute("material", "color", "#9f9");
+  hoverDropEl = el;
+
+  //Start hovering on droptarget - lets render that.
+
+  let t = el;
+  let id = getId(t);
+  let parentArray = getParentArray(t);
+  var i = parentArray.findIndex((c) => c.name == id);
+  console.log("i: " + i);
+
+  let clone = JSON.parse(JSON.stringify(draggedBlockConfig));
+  clone.name = `${clone.name}-${element_count}`;
+  parentArray.splice(i + 1, 0, clone);
+  destConfig = parentArray[i + 1];
+
+  // debugger;
+  clearRender();
+  renderPage();
+  time_last_add = new Date().getTime();
+}
+let time_last_add = new Date().getTime();
+let TIME_DELAY = 100;
+
+function stopDropHover(el) {
+  console.log("stopDropHover: ", el.id);
+  hoverDropEl.setAttribute("material", "color", "#999");
+  hoverDropEl = null;
+
+  //TODO put the item in the new place permanently - get rid of the draaaggin.
+  //hoverEl = null;
+  hoverEl.parentElement.removeChild(hoverEl);
+  hoverEl = null;
+}
+
+function getId(t) {
+  var id = t.getAttribute("id").split("_")[0];
+  return id;
+}
+
+function getParentArray(t) {
+  let id = getId(t);
+  console.log("hover id: " + id);
+  var item = document.getElementById(id);
+  console.log("array:" + item);
+  var parentArray = item.parentArray;
+  return parentArray;
+}

@@ -1,5 +1,14 @@
-Run this from command line:
-browser-sync start --server --files="**/*" --https
+2023-03-05
+
+Remove dragged item from Content.
+* remove it from content_tree. (splice)
+* rerender the page.
+
+On hover, add back to contentTree (as tentatative.)
+
+Need to get hilighting to work.
+Need to saave to somewhere which item is hilighted - so that when it is rendered again it shows hilighted.
+------
 
 Objective right now is to move an item with cursor/controller.
 

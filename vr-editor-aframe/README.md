@@ -1,4 +1,7 @@
 RUN IT:
+Run this from command line:
+browser-sync start --server --files="**/*" --https
+
 To Start
 http-server -S -C cert.pem
 
@@ -32,7 +35,11 @@ Listens for "mousedown" and "mouseup" (Which also captures 'laser' conroller tri
     * if "hoverEl" is set, then set color back and attach to scene. (BUT: should attach to new parent.)
     * if "hoverEl" is not set... then check raycaster because we might be on something now.
 
+is_dragging is only true if mousing with button down AND an item is in hoverstate.
 
+----
+How to simplify. Its very buggy now.
+----
 
 
 Alternatives to browsersync which appeaars to have issues. 

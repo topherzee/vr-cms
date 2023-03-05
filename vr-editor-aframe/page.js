@@ -16,7 +16,7 @@ function addDropTarget(parentEl, width) {
     shader: "flat",
   });
 
-  targetEl.setAttribute("id", parentEl.id + "-droptarget");
+  targetEl.setAttribute("id", parentEl.id + "_droptarget");
   targetEl.classList.add("droptarget");
 
   parentEl.appendChild(targetEl);
@@ -27,6 +27,10 @@ function buildText(block, entityEl, width, height) {
 
   var isHeader = block["text"].indexOf("<h2>") > -1;
   var text = htmlToText(block["text"]);
+
+  if (block.tentative) {
+    text += "-tentative";
+  }
 
   if (isHeader) {
     entityEl.setAttribute(
@@ -44,7 +48,7 @@ function buildText(block, entityEl, width, height) {
     side: "double",
     shader: "flat",
   });
-  console.log(" text:" + text);
+  //console.log(" text:" + text);
 
   entityEl.height = 0.5;
 }
@@ -53,15 +57,16 @@ function buildGeneric(block, entityEl, width, height) {
   setGeoPlane(entityEl, width, height);
 }
 
-function renderBlock(block, x, y, z, width, orientation) {
+function renderBlock(block, x, y, z, width, orientation, parentArray) {
   index++;
 
   var type = block["mgnl:type"];
   var type = block.type;
 
-  console.log("renderBlock type:" + type);
+  //console.log("renderBlock type:" + type);
 
   var entityEl = document.createElement("a-entity");
+  entityEl.parentArray = parentArray;
 
   entityEl.height = 0.5;
 
@@ -74,7 +79,7 @@ function renderBlock(block, x, y, z, width, orientation) {
 
   if (type == "text" || type == "banner") {
     if (containsLink(block)) {
-      console.log("index:" + index + " contains Link. Skipping:" + type);
+      //console.log("index:" + index + " contains Link. Skipping:" + type);
       return false;
     }
     buildText(block, entityEl, width, entityEl.height);
@@ -142,10 +147,18 @@ function renderContent(
     } else {
       let percent = parseInt(c.width.replace("%", ""));
       width = (width_for_percent * percent) / 100;
-      console.log("width: " + width);
+      //console.log("width: " + width);
     }
 
-    let newBlock = renderBlock(c, x - width * 0.5, y, z, width, orientation);
+    let newBlock = renderBlock(
+      c,
+      x - width * 0.5,
+      y,
+      z,
+      width,
+      orientation,
+      content
+    );
     if (newBlock) {
       parentBlock.appendChild(newBlock);
       height = newBlock.height;
@@ -203,34 +216,67 @@ function widthOfAllPixels(content) {
   return pxCount;
 }
 
+function createPageHolder(parentEl) {
+  // console.log(" addDropTarget:");
+  var el = document.createElement("a-entity");
+  // var w = width - 0.03;
+  setGeoPlane(el, 2, 2);
+
+  // let y = 1;
+  el.setAttribute("position", { x: PAGE_X, y: PAGE_Y, z: PAGE_Z });
+  el.setAttribute("rotation", { x: 0, y: 0, z: 0 });
+
+  el.setAttribute("material", {
+    color: "#333",
+    side: "double",
+    shader: "flat",
+  });
+
+  el.setAttribute("id", "pageHolder");
+
+  parentEl.appendChild(el);
+  return el;
+}
+let pageHolder;
+
 let PAGE_Y = 1;
 let PAGE_X = 0;
 let PAGE_Z = -2;
+
+function clearRender() {
+  pageHolder.innerHTML = ""; //remove all child elements.
+}
+function renderPage() {
+  console.log("renderPage()");
+  // renderItemContent(test_obj, 1, 1, 100, "horiz", null);
+  // renderBlock(test_obj, 1, 1, 100, "horiz", null);
+  var sceneEl = document.querySelector("a-scene");
+  //renderBlock(test_obj, 0, sceneEl, 0);
+
+  pageHolder = createPageHolder(sceneEl);
+
+  let parentBlock = pageHolder;
+  let x = 0;
+  let y = 0;
+  let z = 0.1;
+  let width_to_share = 1.0;
+  let orientation = "";
+
+  renderContent(
+    parentBlock,
+    content_tree.content,
+    x,
+    y,
+    z,
+    width_to_share,
+    orientation
+  );
+}
+
 AFRAME.registerComponent("page", {
   init: function () {
     //this.originalRotation = this.el.object3D.rotation.y;
-    console.log("init page component 4");
-    // renderItemContent(test_obj, 1, 1, 100, "horiz", null);
-    // renderBlock(test_obj, 1, 1, 100, "horiz", null);
-    var sceneEl = document.querySelector("a-scene");
-    //renderBlock(test_obj, 0, sceneEl, 0);
-
-    let parentBlock = sceneEl;
-    let x = PAGE_X;
-    let y = PAGE_Y;
-    let z = PAGE_Z;
-    let width_to_share = 1.0;
-    let orientation = "";
-
-    renderContent(
-      parentBlock,
-      content_tree.content,
-      x,
-      y,
-      z,
-      width_to_share,
-      orientation
-    );
+    renderPage();
   },
 
   remove: function () {
