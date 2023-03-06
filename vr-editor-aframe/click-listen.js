@@ -75,6 +75,7 @@ AFRAME.registerComponent("mover", {
       if (hoverDropEl) {
         //handle drop on target!
         //add item here.
+        // handleItemMove();
       }
 
       //TODO - otherwise dragged thing should go back home.
@@ -208,7 +209,7 @@ AFRAME.registerComponent("mover", {
     if (hoverDropEl) {
       //Currently hovering
       //Did we drop it?
-      if (!el) {
+      if (!el || el != hoverDropEl) {
         //yes
 
         stopDropHover(hoverEl);
@@ -234,9 +235,23 @@ function startDropHover(el) {
   el.setAttribute("material", "color", "#9f9");
   hoverDropEl = el;
 
+  handleItemMove();
+}
+
+let time_last_add = new Date().getTime();
+let TIME_DELAY = 100;
+
+function stopDropHover(el) {
+  console.log("stopDropHover: ", el.id);
+  hoverDropEl.setAttribute("material", "color", "#999");
+  hoverDropEl = null;
+}
+
+function handleItemMove() {
   //Start hovering on droptarget - lets render that.
 
-  let t = el;
+  // Put tentatative item in the config
+  let t = hoverDropEl;
   let id = getId(t);
   let parentArray = getParentArray(t);
   var i = parentArray.findIndex((c) => c.name == id);
@@ -247,23 +262,15 @@ function startDropHover(el) {
   parentArray.splice(i + 1, 0, clone);
   destConfig = parentArray[i + 1];
 
+  //TODO put the item in the new place permanently - get rid of the draaaggin.
+
+  // hoverEl.parentElement.removeChild(hoverEl);
+  // hoverEl = null;
+
   // debugger;
   clearRender();
   renderPage();
   time_last_add = new Date().getTime();
-}
-let time_last_add = new Date().getTime();
-let TIME_DELAY = 100;
-
-function stopDropHover(el) {
-  console.log("stopDropHover: ", el.id);
-  hoverDropEl.setAttribute("material", "color", "#999");
-  hoverDropEl = null;
-
-  //TODO put the item in the new place permanently - get rid of the draaaggin.
-  //hoverEl = null;
-  hoverEl.parentElement.removeChild(hoverEl);
-  hoverEl = null;
 }
 
 function getId(t) {
