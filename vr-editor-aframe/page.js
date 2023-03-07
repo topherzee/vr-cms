@@ -32,6 +32,21 @@ function buildText(block, entityEl, width, height) {
     text += "-tentative";
   }
 
+  entityEl.setAttribute("material", {
+    color: "#ddd",
+    side: "double",
+    shader: "flat",
+  });
+  //console.log(" text:" + text);
+
+  entityEl.height = 0.5;
+
+  // console.log("TEXT: ", entityEl.components.text);
+  // if (entityEl.components.text) {
+  //   console.log("TEXT: REMOVE");
+  //   // return; //need this - otherwise get errors about removing text object3d.
+  // }
+
   if (isHeader) {
     entityEl.setAttribute(
       "text",
@@ -43,29 +58,36 @@ function buildText(block, entityEl, width, height) {
       "side: front; color: black; wrap-count: 20;   value: " + text
     );
   }
-  entityEl.setAttribute("material", {
-    color: "#ddd",
-    side: "double",
-    shader: "flat",
-  });
-  //console.log(" text:" + text);
-
-  entityEl.height = 0.5;
 }
 
 function buildGeneric(block, entityEl, width, height) {
   setGeoPlane(entityEl, width, height);
 }
 
-function renderBlock(block, x, y, z, width, orientation, parentArray) {
+function renderBlock(
+  block,
+  x,
+  y,
+  z,
+  width,
+  orientation,
+  parentArray,
+  parentBlock
+) {
   index++;
 
-  var type = block["mgnl:type"];
+  let entityEl = document.getElementById(block.name);
+  let is_new = false;
+  if (!entityEl) {
+    is_new = true;
+    entityEl = document.createElement("a-entity");
+  }
+  entityEl.setAttribute("id", block.name);
+
   var type = block.type;
 
   //console.log("renderBlock type:" + type);
 
-  var entityEl = document.createElement("a-entity");
   entityEl.parentArray = parentArray;
 
   entityEl.height = 0.5;
@@ -73,7 +95,6 @@ function renderBlock(block, x, y, z, width, orientation, parentArray) {
   entityEl.setAttribute("position", { x: x, y: y, z: z });
   entityEl.setAttribute("rotation", { x: 0, y: 0, z: 0 });
   entityEl.setAttribute("data-managed", true);
-  entityEl.setAttribute("id", block.name);
 
   entityEl.classList.add("movable");
 
@@ -93,8 +114,12 @@ function renderBlock(block, x, y, z, width, orientation, parentArray) {
   //   return false;
   // }
   // return true;
+  if (is_new) {
+    addDropTarget(entityEl, width);
+    parentBlock.appendChild(entityEl);
+  }
 
-  addDropTarget(entityEl, width);
+  //TODO.
 
   return entityEl;
 }
@@ -150,6 +175,8 @@ function renderContent(
       //console.log("width: " + width);
     }
 
+    //DOES BLOCK EXIST?
+
     let newBlock = renderBlock(
       c,
       x - width * 0.5,
@@ -157,10 +184,11 @@ function renderContent(
       z,
       width,
       orientation,
-      content
+      content,
+      parentBlock
     );
     if (newBlock) {
-      parentBlock.appendChild(newBlock);
+      //parentBlock.appendChild(newBlock);
       height = newBlock.height;
       // console.log("height: " + height)
 
@@ -217,7 +245,6 @@ function widthOfAllPixels(content) {
 }
 
 function createPageHolder(parentEl) {
-  // console.log(" addDropTarget:");
   var el = document.createElement("a-entity");
   // var w = width - 0.03;
   setGeoPlane(el, 2, 2);
@@ -243,17 +270,13 @@ let PAGE_Y = 1;
 let PAGE_X = 0;
 let PAGE_Z = -2;
 
-function clearRender() {
-  pageHolder.innerHTML = ""; //remove all child elements.
-}
+// function clearRender() {
+//   pageHolder.innerHTML = ""; //remove all child elements.
+// }
 function renderPage() {
   console.log("renderPage()");
   // renderItemContent(test_obj, 1, 1, 100, "horiz", null);
   // renderBlock(test_obj, 1, 1, 100, "horiz", null);
-  var sceneEl = document.querySelector("a-scene");
-  //renderBlock(test_obj, 0, sceneEl, 0);
-
-  pageHolder = createPageHolder(sceneEl);
 
   let parentBlock = pageHolder;
   let x = 0;
@@ -276,6 +299,13 @@ function renderPage() {
 AFRAME.registerComponent("page", {
   init: function () {
     //this.originalRotation = this.el.object3D.rotation.y;
+
+    var sceneEl = document.querySelector("a-scene");
+    //renderBlock(test_obj, 0, sceneEl, 0);
+
+    pageHolder = createPageHolder(sceneEl);
+
+    renderPage();
     renderPage();
   },
 
@@ -336,6 +366,7 @@ var content_tree = {
       width: "100%",
       text: "I am Header!",
     },
+
     {
       name: "main-2",
       type: "area",
@@ -357,17 +388,18 @@ var content_tree = {
         },
       ],
     },
+
     {
       name: "section-1",
       type: "banner",
       width: "100%",
-      text: "Section",
+      text: "Section 1",
     },
     {
       name: "section-2",
       type: "banner",
       width: "50%",
-      text: "Offers",
+      text: "Offers 2",
     },
 
     // {
@@ -397,12 +429,12 @@ var content_tree = {
     //     },
     //   ],
     // },
-    // {
-    //   name: "footer-10",
-    //   type: "banner",
-    //   width: "100%",
-    //   text: "Foot.",
-    // },
+    {
+      name: "footer-10",
+      type: "banner",
+      width: "100%",
+      text: "Foot.",
+    },
     // ],
     // },
   ],

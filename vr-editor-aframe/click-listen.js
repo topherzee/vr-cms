@@ -6,6 +6,7 @@ let desktop = false;
 let hoverEl = null;
 let hoverDropEl = null;
 let is_dragging = false;
+let tentative_id = null;
 
 function getIntersectedItemWithClass(that, className) {
   let els = that.components.raycaster.intersectedEls;
@@ -102,6 +103,7 @@ AFRAME.registerComponent("mover", {
     console.log("startDrag() 1");
 
     is_dragging = true;
+
     hoverEl.setAttribute("material", "opacity", 0.5);
     let dragParent = document.getElementById("scene");
 
@@ -146,6 +148,7 @@ AFRAME.registerComponent("mover", {
 
     // Create new element, copy the current one on it
     let newEl = this.cloneElement(el);
+    newEl.setAttribute("id", "draggy");
     // Listener for location, rotation,... when the new el is laded
     relocate = function () {
       newEl.object3D.location = location;
@@ -158,7 +161,7 @@ AFRAME.registerComponent("mover", {
     controlObject.appendChild(newEl);
     el.parentElement.removeChild(el);
 
-    clearRender();
+    //clearRender();
     renderPage();
     //renderContent(topBlock, content_tree.content, 100, 0);
   },
@@ -228,49 +231,58 @@ AFRAME.registerComponent("mover", {
 });
 
 function startDropHover(el) {
-  if (new Date().getTime() < time_last_add + TIME_DELAY) {
-    return;
-  }
   console.log("startDropHover: ", el.id);
   el.setAttribute("material", "color", "#9f9");
   hoverDropEl = el;
 
-  handleItemMove();
-}
-
-let time_last_add = new Date().getTime();
-let TIME_DELAY = 100;
-
-function stopDropHover(el) {
-  console.log("stopDropHover: ", el.id);
-  hoverDropEl.setAttribute("material", "color", "#999");
-  hoverDropEl = null;
-}
-
-function handleItemMove() {
-  //Start hovering on droptarget - lets render that.
-
   // Put tentatative item in the config
   let t = hoverDropEl;
   let id = getId(t);
+
   let parentArray = getParentArray(t);
   var i = parentArray.findIndex((c) => c.name == id);
   console.log("i: " + i);
 
+  //Put the config in the content_tree.
+  tentative_id = draggedBlockConfig.name;
   let clone = JSON.parse(JSON.stringify(draggedBlockConfig));
-  clone.name = `${clone.name}-${element_count}`;
+  // clone.name = `${clone.name}-${element_count}`;
   parentArray.splice(i + 1, 0, clone);
   destConfig = parentArray[i + 1];
 
   //TODO put the item in the new place permanently - get rid of the draaaggin.
 
-  // hoverEl.parentElement.removeChild(hoverEl);
-  // hoverEl = null;
-
-  // debugger;
-  clearRender();
   renderPage();
-  time_last_add = new Date().getTime();
+}
+
+// let time_last_add = new Date().getTime();
+// let TIME_DELAY = 100;
+
+function stopDropHover(el) {
+  console.log("stopDropHover: ", el.id);
+  hoverDropEl.setAttribute("material", "color", "#999");
+  //hoverDropEl = null;
+
+  //let t = hoverDropEl;
+  let id = tentative_id;
+  tentative_id = null;
+  hoverDropEl = null;
+
+  console.log("id: ", id);
+
+  //remove item from config
+  let t = document.getElementById(id);
+
+  let parentArray = getParentArray(t);
+  var i = parentArray.findIndex((c) => c.name == id);
+  console.log("i: " + i);
+
+  parentArray.splice(i, 1);
+
+  //remove DOM element
+  t.parentNode.removeChild(t);
+
+  renderPage();
 }
 
 function getId(t) {
