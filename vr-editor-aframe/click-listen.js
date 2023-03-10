@@ -90,11 +90,6 @@ AFRAME.registerComponent("mover", {
         var i = parentArray.findIndex((c) => c.name == id);
         parentArray[i + 1].tentative = false;
         renderPage();
-
-        //OR IF WE WANTED TO DROP ITEM in 3D Space...
-        // let s = document.getElementById("pageHolder");
-        // let s2 = s.object3D;
-        // s2.attach(hoverEl.object3D);
       } else {
         //the dragged item should snap back to original position.
         content_tree = JSON.parse(JSON.stringify(content_tree_backup));
@@ -110,11 +105,18 @@ AFRAME.registerComponent("mover", {
 
         // Current problem - when you let go of the item it should dissapear - the draaggy, but now it creates a hole in the layout.
         //KILL DRAGGY
-        console.log("KILL DRAGGY");
+        if (hoverEl.classList.contains("3d-movable")) {
+          //OR IF WE WANTED TO DROP ITEM in 3D Space...
+          let s = document.getElementById("pageHolder"); //or to the scene itself?
+          let s2 = s.object3D;
+          s2.attach(hoverEl.object3D);
+        } else {
+          console.log("KILL DRAGGY");
 
-        let d = document.getElementById("draggy");
-        hoverEl.parentElement.removeChild(hoverEl);
-        hoverEl = null;
+          let d = document.getElementById("draggy");
+          hoverEl.parentElement.removeChild(hoverEl);
+          hoverEl = null;
+        }
 
         console.log("stop drag 3");
       } else {
