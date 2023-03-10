@@ -135,6 +135,7 @@ AFRAME.registerComponent("mover", {
 
     hoverEl.setAttribute("material", "opacity", 0.5);
 
+    //attach item to controller to drag...
     let c2 = controlObject.object3D;
     let d = hoverEl.object3D;
     c2.attach(d);
@@ -224,6 +225,7 @@ AFRAME.registerComponent("mover", {
     if (hoverEl) {
       // hoverEl.setAttribute("material", "emmisive", "#000");
       hoverEl.setAttribute("material", "color", hoverColor);
+
       hoverEl = null;
     }
 
@@ -235,6 +237,9 @@ AFRAME.registerComponent("mover", {
       hoverColor = el.getAttribute("color");
 
       el.setAttribute("material", "color", "green");
+      el.setAttribute("outline", "color:orange");
+      // el.setAttribute("outline", "color", "orange");
+      //s.setAttribute('outline','color:orange');
       hoverEl = el;
     }
   },

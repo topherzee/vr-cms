@@ -2,12 +2,13 @@ RUN IT:
 Run this from command line:
 browser-sync start --server --files="**/*" --https
 
-To Start
+OR To Start
 http-server -S -C cert.pem
-
-Go to chrome://inspect#devices
+DEBUG:
 adb devices
+Go to chrome://inspect#devices
 
+----
 
 How the Dragging works in 3D:
 
@@ -36,9 +37,43 @@ Listens for "mousedown" and "mouseup" (Which also captures 'laser' conroller tri
     * if "hoverEl" is not set... then check raycaster because we might be on something now.
 
 is_dragging is only true if mousing with button down AND an item is in hoverstate.
+----
+KEY STATE: 
+is_dragging - Whether a block is being dragged. (Set in startDrag())
+hoverEl
+hoverDropEl
+draggedBlockConfig
+tentative_id
+
+SOON
+dragged_parentArray
+dragged_index
+
+
+STEPS FOR SUCCESSFUL DRAG & DROP
+* Ray Intersection event
+    If not dragging, calls setHover()
+        Sets HoverEl
+* Mousedown on an element 
+    Calls startDrag(). 
+        Sets is_dragging 
+        Sets draggedBlockConfig
+* Hover over a Drop Target
+    checkForDropHover()
+        Either startDropHover or stopDropHover
+        startDropHover()
+            Sets hoverDropEl
+            Injects into content_tree and rerenders.
+        stopDropHover()
+            Clears hoverDropEl
+            Removes from conent_tree and rerenders.
+* Mouseup - Checks for is_dragging.
+    
 
 ----
 How to simplify. Its very buggy now.
+
+Consider making the rayCast events into over events "mouseover" "mouseout"
 ----
 
 

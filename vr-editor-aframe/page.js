@@ -23,7 +23,13 @@ function addDropTarget(parentEl, width) {
 }
 
 function buildText(block, entityEl, width, height) {
-  setGeoPlane(entityEl, width, height);
+  entityEl.setAttribute("geometry", {
+    primitive: "box",
+    width: width,
+    height: height,
+    depth: 0.001,
+  });
+  //entityEl.setAttribute("position", { x: 0, y: 0, z: 0.01 });
 
   var isHeader = block["text"].indexOf("<h2>") > -1;
   var text = htmlToText(block["text"]);
@@ -32,7 +38,29 @@ function buildText(block, entityEl, width, height) {
     text += "-tentative";
   }
 
-  entityEl.setAttribute("material", {
+  var textEl;
+
+  //if we already have a text - dont make another one. //But changge text if need be.
+  if (entityEl.querySelector(".text")) {
+    textEl = entityEl.querySelector(".text");
+    //textEl.setAttribute("text", "value: " + text);
+    textEl.setAttribute("text", "value: " + text);
+    return;
+  } else {
+    textEl = document.createElement("a-entity");
+  }
+
+  textEl.classList.add("text");
+
+  textEl.setAttribute("geometry", {
+    primitive: "plane",
+    width: width,
+    height: height,
+  });
+  textEl.setAttribute("position", { x: 0, y: 0, z: 0.005 });
+  entityEl.appendChild(textEl);
+
+  textEl.setAttribute("material", {
     color: "#ddd",
     side: "double",
     shader: "flat",
@@ -48,12 +76,12 @@ function buildText(block, entityEl, width, height) {
   // }
 
   if (isHeader) {
-    entityEl.setAttribute(
+    textEl.setAttribute(
       "text",
       "side: front; color: black; align: center; wrap-count: 20; value: " + text
     );
   } else {
-    entityEl.setAttribute(
+    textEl.setAttribute(
       "text",
       "side: front; color: black; wrap-count: 20;   value: " + text
     );
@@ -141,6 +169,17 @@ function setGeoPlane(entityEl, width, height) {
     height: height,
   });
 }
+// function addBox(entityEl, width, height) {
+//   var el = document.createElement("a-entity");
+//   el.setAttribute("geometry", {
+//     primitive: "box",
+//     width: width,
+//     height: height,
+//     depth: 0.1,
+//   });
+//   el.setAttribute("position", { x: 0, y: 0, z: -0.1 });
+//   entityEl.appendChild(el);
+// }
 var MARGIN = 0.01;
 var index = 0;
 
