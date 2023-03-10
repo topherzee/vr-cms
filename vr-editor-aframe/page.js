@@ -352,6 +352,7 @@ var component_menu = [
 
 var WIDTH_PAGE = "1";
 
+var content_tree_backup;
 var content_tree = {
   content: [
     // {

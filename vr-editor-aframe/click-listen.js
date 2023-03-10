@@ -71,26 +71,52 @@ AFRAME.registerComponent("mover", {
 
     this.el.addEventListener("mouseup", function (evt) {
       console.log("mouseup()");
-      is_dragging = false;
-
-      if (hoverDropEl) {
-        //handle drop on target!
-        //add item here.
-        // handleItemMove();
+      //if dragging something
+      if (!is_dragging) {
+        return;
       }
+      is_dragging = false;
+      tentative_id = null;
+      hoverEl.setAttribute("material", "opacity", 1.0);
 
-      //TODO - otherwise dragged thing should go back home.
+      //If hovering on drop target - Put the item there.
+      if (hoverDropEl) {
+        console.log("stop drag 1");
+        //handle drop on target!
+        // Change the tentative item into fixed item.
+        let id = getId(hoverDropEl);
+        let t = document.getElementById(id);
+        let parentArray = getParentArray(t);
+        var i = parentArray.findIndex((c) => c.name == id);
+        parentArray[i + 1].tentative = false;
+        renderPage();
 
-      that.checkForDropHover(null);
+        //OR IF WE WANTED TO DROP ITEM in 3D Space...
+        // let s = document.getElementById("pageHolder");
+        // let s2 = s.object3D;
+        // s2.attach(hoverEl.object3D);
+      } else {
+        //the dragged item should snap back to original position.
+        content_tree = JSON.parse(JSON.stringify(content_tree_backup));
+        renderPage();
+        //that.checkForDropHover(null);
+      } //hoverEl
 
       if (hoverEl) {
-        hoverEl.setAttribute("material", "opacity", 1.0);
+        console.log("stop drag 2");
+        draggedBlockConfig = null;
 
         // let s = document.getElementById("scene");
-        let s = document.getElementById("pageHolder");
-        let s2 = s.object3D;
-        s2.attach(hoverEl.object3D);
-        console.log("stop drag");
+
+        // Current problem - when you let go of the item it should dissapear - the draaggy, but now it creates a hole in the layout.
+        //KILL DRAGGY
+        console.log("KILL DRAGGY");
+
+        let d = document.getElementById("draggy");
+        hoverEl.parentElement.removeChild(hoverEl);
+        hoverEl = null;
+
+        console.log("stop drag 3");
       } else {
         //if there was no hover... check if we are now intersecting something
         let el = this.components.raycaster.intersectedEls[0] || null;
@@ -99,13 +125,13 @@ AFRAME.registerComponent("mover", {
       }
     });
   },
+
   startDrag: function (controlObject) {
     console.log("startDrag() 1");
 
     is_dragging = true;
 
     hoverEl.setAttribute("material", "opacity", 0.5);
-    let dragParent = document.getElementById("scene");
 
     let c2 = controlObject.object3D;
     let d = hoverEl.object3D;
@@ -113,6 +139,7 @@ AFRAME.registerComponent("mover", {
     console.log("start drag() 2");
 
     //remove from content tree
+    content_tree_backup = JSON.parse(JSON.stringify(content_tree));
     // debugger;
     t = hoverEl;
     var id = t.getAttribute("id").split("_")[0];
@@ -120,6 +147,9 @@ AFRAME.registerComponent("mover", {
     var item = document.getElementById(id);
 
     var parentArray = item.parentArray;
+    if (!parentArray) {
+      return;
+    }
     var i = parentArray.findIndex((c) => c.name == id);
     console.log("i: " + i);
 
@@ -215,7 +245,7 @@ AFRAME.registerComponent("mover", {
       if (!el || el != hoverDropEl) {
         //yes
 
-        stopDropHover(hoverEl);
+        stopDropHover();
       }
     }
 
@@ -237,20 +267,31 @@ function startDropHover(el) {
 
   // Put tentatative item in the config
   let t = hoverDropEl;
+
   let id = getId(t);
 
+  insertBlockAfter(id);
+}
+/**
+ *
+ * @param {*} id - Insert after element with this id.
+ */
+function insertBlockAfter(id) {
+  console.log("insertBlockAfter: ", id);
+  let t = document.getElementById(id);
   let parentArray = getParentArray(t);
   var i = parentArray.findIndex((c) => c.name == id);
-  console.log("i: " + i);
+  console.log("insertBlockAfter i: " + i);
 
   //Put the config in the content_tree.
   tentative_id = draggedBlockConfig.name;
   let clone = JSON.parse(JSON.stringify(draggedBlockConfig));
   // clone.name = `${clone.name}-${element_count}`;
-  parentArray.splice(i + 1, 0, clone);
-  destConfig = parentArray[i + 1];
 
-  //TODO put the item in the new place permanently - get rid of the draaaggin.
+  console.log(content_tree);
+  parentArray.splice(i + 1, 0, clone);
+
+  console.log(content_tree);
 
   renderPage();
 }
@@ -258,8 +299,8 @@ function startDropHover(el) {
 // let time_last_add = new Date().getTime();
 // let TIME_DELAY = 100;
 
-function stopDropHover(el) {
-  console.log("stopDropHover: ", el.id);
+function stopDropHover() {
+  console.log("stopDropHover()");
   hoverDropEl.setAttribute("material", "color", "#999");
   //hoverDropEl = null;
 
@@ -269,6 +310,9 @@ function stopDropHover(el) {
   hoverDropEl = null;
 
   console.log("id: ", id);
+  if (!id) {
+    return;
+  }
 
   //remove item from config
   let t = document.getElementById(id);

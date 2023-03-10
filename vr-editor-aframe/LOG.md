@@ -1,4 +1,13 @@
+Current problem - when you let go of the item it should dissapear - the draaggy, but now it creates a hole in the layout.
+
+2023-03-07
+
+Remember which element we added - so we can take it back again.
+Get it from the parentArraay and the ID.
+
 2023-03-05
+
+
 
 Remove dragged item from Content.
 * remove it from content_tree. (splice)
