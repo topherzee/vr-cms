@@ -7,7 +7,7 @@ function addDropTarget(parentEl, width) {
   setGeoPlane(targetEl, w, DROP_WIDTH);
 
   let y = parentEl.height / 2 - DROP_WIDTH / 2;
-  targetEl.setAttribute("position", { x: 0, y: -y, z: 0.01 });
+  targetEl.setAttribute("position", { x: 0, y: -y, z: THICKNESS + 0.015 });
   targetEl.setAttribute("rotation", { x: 0, y: 0, z: 0 });
 
   targetEl.setAttribute("material", {
@@ -22,12 +22,18 @@ function addDropTarget(parentEl, width) {
   parentEl.appendChild(targetEl);
 }
 
+let THICKNESS = 0.1;
 function buildText(block, entityEl, width, height) {
   entityEl.setAttribute("geometry", {
     primitive: "box",
     width: width,
     height: height,
-    depth: 0.001,
+    depth: THICKNESS,
+  });
+  entityEl.setAttribute("material", {
+    color: "#66c",
+    side: "double",
+    shader: "flat",
   });
   //entityEl.setAttribute("position", { x: 0, y: 0, z: 0.01 });
 
@@ -57,7 +63,7 @@ function buildText(block, entityEl, width, height) {
     width: width,
     height: height,
   });
-  textEl.setAttribute("position", { x: 0, y: 0, z: 0.005 });
+  textEl.setAttribute("position", { x: 0, y: 0, z: THICKNESS / 2 + 0.01 });
   entityEl.appendChild(textEl);
 
   textEl.setAttribute("material", {
@@ -90,6 +96,27 @@ function buildText(block, entityEl, width, height) {
 
 function buildGeneric(block, entityEl, width, height) {
   setGeoPlane(entityEl, width, height);
+}
+
+function generateElementFromContent(block, parentArray) {
+  block.name += "_THING";
+
+  var width = 1;
+  let orientation = "";
+  let content = null;
+  let parentBlock = null;
+  let el = renderBlock(
+    block,
+    0,
+    0,
+    -1,
+    width,
+    orientation,
+    parentArray,
+    parentBlock
+  );
+
+  return el;
 }
 
 function renderBlock(
@@ -144,7 +171,9 @@ function renderBlock(
   // return true;
   if (is_new) {
     addDropTarget(entityEl, width);
-    parentBlock.appendChild(entityEl);
+    if (parentBlock) {
+      parentBlock.appendChild(entityEl);
+    }
   }
 
   //TODO.

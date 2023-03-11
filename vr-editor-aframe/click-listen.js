@@ -48,8 +48,10 @@ AFRAME.registerComponent("mover", {
       function (event) {
         // console.log("cleared while dragging: ");
         //do we need thiss? TODO
-        let dropEl = getIntersectedItemWithClass(this, "droptarget");
-        that.checkForDropHover(dropEl);
+        if (is_dragging) {
+          let dropEl = getIntersectedItemWithClass(this, "droptarget");
+          that.checkForDropHover(dropEl);
+        }
 
         // let el = this.components.raycaster.intersectedEls[0] || null;
         let el = getIntersectedItemWithClass(this, "movable");
@@ -71,6 +73,7 @@ AFRAME.registerComponent("mover", {
 
     this.el.addEventListener("mouseup", function (evt) {
       console.log("mouseup()");
+
       //if dragging something
       if (!is_dragging) {
         return;
@@ -133,7 +136,9 @@ AFRAME.registerComponent("mover", {
 
     is_dragging = true;
 
+    // I dont know why the dragged thing does nothing.AFRAME
     hoverEl.setAttribute("material", "opacity", 0.5);
+    hoverEl.removeAttribute("outline");
 
     //attach item to controller to drag...
     let c2 = controlObject.object3D;
@@ -180,7 +185,12 @@ AFRAME.registerComponent("mover", {
     let scale = el.object3D.scale;
 
     // Create new element, copy the current one on it
-    let newEl = this.cloneElement(el);
+    el.removeAttribute("outline");
+    let newEl = cloneElement(el);
+    // let newEl = el.cloneNode();
+    newEl.parentArray = el.parentArray;
+
+    //let newEl = generateElementFromContent(draggedBlockConfig, parentArray);
     newEl.setAttribute("id", "draggy");
     // Listener for location, rotation,... when the new el is laded
     relocate = function () {
@@ -189,7 +199,10 @@ AFRAME.registerComponent("mover", {
       newEl.object3D.scale = scale;
     };
     newEl.addEventListener("loaded", relocate, { once: true });
+
     hoverEl = newEl;
+    hoverEl.removeAttribute("outline");
+    hoverEl.setAttribute("outline", "color:blue");
 
     controlObject.appendChild(newEl);
     el.parentElement.removeChild(el);
@@ -197,19 +210,6 @@ AFRAME.registerComponent("mover", {
     //clearRender();
     renderPage();
     //renderContent(topBlock, content_tree.content, 100, 0);
-  },
-  cloneElement: function (el) {
-    let newEl = document.createElement(el.tagName);
-    if (el.hasAttributes()) {
-      let attrs = el.attributes;
-      for (var i = attrs.length - 1; i >= 0; i--) {
-        let attrName = attrs[i].name;
-        let attrVal = el.getAttribute(attrName);
-        newEl.setAttribute(attrName, attrVal);
-      }
-    }
-    newEl.parentArray = el.parentArray;
-    return newEl;
   },
 
   setHover: function (el) {
@@ -225,6 +225,7 @@ AFRAME.registerComponent("mover", {
     if (hoverEl) {
       // hoverEl.setAttribute("material", "emmisive", "#000");
       hoverEl.setAttribute("material", "color", hoverColor);
+      hoverEl.removeAttribute("outline");
 
       hoverEl = null;
     }
@@ -238,8 +239,7 @@ AFRAME.registerComponent("mover", {
 
       el.setAttribute("material", "color", "green");
       el.setAttribute("outline", "color:orange");
-      // el.setAttribute("outline", "color", "orange");
-      //s.setAttribute('outline','color:orange');
+
       hoverEl = el;
     }
   },
@@ -267,6 +267,26 @@ AFRAME.registerComponent("mover", {
   },
 });
 
+function cloneElement(el) {
+  let newEl = document.createElement(el.tagName);
+  if (el.hasAttributes()) {
+    let attrs = el.attributes;
+    for (var i = attrs.length - 1; i >= 0; i--) {
+      let attrName = attrs[i].name;
+      let attrVal = el.getAttribute(attrName);
+      newEl.setAttribute(attrName, attrVal);
+    }
+
+    for (var i = el.children.length - 1; i >= 0; i--) {
+      if (!el.children[i].classList.contains("droptarget")) {
+        newEl.appendChild(cloneElement(el.children[i]));
+      }
+    }
+  }
+
+  return newEl;
+}
+
 function startDropHover(el) {
   console.log("startDropHover: ", el.id);
   el.setAttribute("material", "color", "#9f9");
@@ -276,6 +296,9 @@ function startDropHover(el) {
   let t = hoverDropEl;
 
   let id = getId(t);
+  if (!id) {
+    return;
+  }
 
   insertBlockAfter(id);
 }
