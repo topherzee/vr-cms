@@ -23,7 +23,8 @@ function addDropTarget(parentEl, width) {
 }
 
 let THICKNESS = 0.1;
-function buildText(block, entityEl, width, height) {
+function buildText(block, entityEl, width, height, elementType) {
+  //Base component must be a box otherwise the OUTLINE will not function properly.
   entityEl.setAttribute("geometry", {
     primitive: "box",
     width: width,
@@ -31,11 +32,13 @@ function buildText(block, entityEl, width, height) {
     depth: THICKNESS,
   });
   entityEl.setAttribute("material", {
-    color: "#66c",
+    color: "#ddd",
     side: "double",
     shader: "flat",
   });
   //entityEl.setAttribute("position", { x: 0, y: 0, z: 0.01 });
+  console.log("buildText. elementType:" + elementType);
+  entityEl.setAttribute("elementType", elementType);
 
   var isHeader = block["text"].indexOf("<h2>") > -1;
   var text = htmlToText(block["text"]);
@@ -113,7 +116,8 @@ function generateElementFromContent(block, parentArray) {
     width,
     orientation,
     parentArray,
-    parentBlock
+    parentBlock,
+    ELEMENT_TYPE_BLOCK
   );
 
   return el;
@@ -127,7 +131,8 @@ function renderBlock(
   width,
   orientation,
   parentArray,
-  parentBlock
+  parentBlock,
+  elementType
 ) {
   index++;
 
@@ -158,10 +163,10 @@ function renderBlock(
       //console.log("index:" + index + " contains Link. Skipping:" + type);
       return false;
     }
-    buildText(block, entityEl, width, entityEl.height);
+    buildText(block, entityEl, width, entityEl.height, elementType);
   } else {
     console.log("index:" + index + "item type not supported:" + type);
-    buildGeneric(block, entityEl, width, entityEl.height);
+    buildGeneric(block, entityEl, width, entityEl.height, elementType);
     //return null;
   }
 
@@ -170,7 +175,10 @@ function renderBlock(
   // }
   // return true;
   if (is_new) {
-    addDropTarget(entityEl, width);
+    if (elementType === ELEMENT_TYPE_BLOCK) {
+      addDropTarget(entityEl, width);
+    }
+
     if (parentBlock) {
       parentBlock.appendChild(entityEl);
     }
@@ -212,6 +220,9 @@ function setGeoPlane(entityEl, width, height) {
 var MARGIN = 0.01;
 var index = 0;
 
+let ELEMENT_TYPE_BLOCK = "ELEMENT_TYPE_BLOCK";
+let ELEMENT_TYPE_MENU = "ELEMENT_TYPE_MENU";
+
 //p = parent.
 function renderContent(
   parentBlock,
@@ -220,7 +231,8 @@ function renderContent(
   y,
   z,
   width_to_share,
-  orientation
+  orientation,
+  elementType
 ) {
   //x = x - width_to_share / 2;
 
@@ -253,7 +265,8 @@ function renderContent(
       width,
       orientation,
       content,
-      parentBlock
+      parentBlock,
+      elementType
     );
     if (newBlock) {
       //parentBlock.appendChild(newBlock);
@@ -275,7 +288,8 @@ function renderContent(
           0,
           0.01,
           width,
-          c.orientation
+          c.orientation,
+          elementType
         );
         let totalHeight = height + heightChildren;
 
@@ -332,11 +346,38 @@ function createPageHolder(parentEl) {
   parentEl.appendChild(el);
   return el;
 }
+
+function createMenuHolder(parentEl) {
+  var el = document.createElement("a-entity");
+  // var w = width - 0.03;
+  setGeoPlane(el, 2, 2);
+
+  // let y = 1;
+  el.setAttribute("position", { x: MENU_X, y: MENU_Y, z: MENU_Z });
+  el.setAttribute("rotation", { x: 0, y: 0, z: 0 });
+
+  el.setAttribute("material", {
+    color: "#855",
+    side: "double",
+    shader: "flat",
+  });
+
+  el.setAttribute("id", "menuHolder");
+
+  parentEl.appendChild(el);
+  return el;
+}
+
 let pageHolder;
+let menuHolder;
 
 let PAGE_Y = 1;
 let PAGE_X = 0;
 let PAGE_Z = -2;
+
+let MENU_Y = 1;
+let MENU_X = -1.2;
+let MENU_Z = -1.9;
 
 // function clearRender() {
 //   pageHolder.innerHTML = ""; //remove all child elements.
@@ -360,7 +401,32 @@ function renderPage() {
     y,
     z,
     width_to_share,
-    orientation
+    orientation,
+    ELEMENT_TYPE_BLOCK
+  );
+}
+
+function renderMenu() {
+  console.log("renderMenu()");
+  // renderItemContent(test_obj, 1, 1, 100, "horiz", null);
+  // renderBlock(test_obj, 1, 1, 100, "horiz", null);
+
+  let parentBlock = menuHolder;
+  let x = 0;
+  let y = 0;
+  let z = 0.11;
+  let width_to_share = 1.0;
+  let orientation = "";
+
+  renderContent(
+    parentBlock,
+    component_menu,
+    x,
+    y,
+    z,
+    width_to_share,
+    orientation,
+    ELEMENT_TYPE_MENU
   );
 }
 
@@ -373,8 +439,25 @@ AFRAME.registerComponent("page", {
 
     pageHolder = createPageHolder(sceneEl);
 
+    // renderPage();
     renderPage();
-    renderPage();
+  },
+
+  remove: function () {
+    this.el.object3D.rotation.y = this.originalRotation;
+  },
+
+  tick: function () {
+    //this.el.object3D.rotation.y += 0.001;
+  },
+});
+
+AFRAME.registerComponent("menu", {
+  init: function () {
+    var sceneEl = document.querySelector("a-scene");
+    menuHolder = createMenuHolder(sceneEl);
+
+    renderMenu();
   },
 
   remove: function () {
@@ -406,13 +489,13 @@ var component_menu = [
   },
   {
     name: "Header-m2",
-    type: "header",
+    type: "banner",
     width: "100%",
     text: "Header",
   },
   {
     name: "Image-m3",
-    type: "image",
+    type: "banner",
     width: "100%",
     text: "Image",
   },

@@ -81,11 +81,13 @@ AFRAME.registerComponent("mover", {
       is_dragging = false;
       tentative_id = null;
       hoverEl.setAttribute("material", "opacity", 1.0);
+      let is_menu_item =
+        hoverEl.getAttribute("elementType") === ELEMENT_TYPE_MENU;
 
       //If hovering on drop target - Put the item there.
       if (hoverDropEl) {
-        console.log("stop drag 1");
-        //handle drop on target!
+        console.log("stop drag 1 - Drop on Item");
+        // Handle drop on target!
         // Change the tentative item into fixed item.
         let id = getId(hoverDropEl);
         let t = document.getElementById(id);
@@ -93,15 +95,24 @@ AFRAME.registerComponent("mover", {
         var i = parentArray.findIndex((c) => c.name == id);
         parentArray[i + 1].tentative = false;
         renderPage();
+        // hoverEl.parentElement.removeChild(hoverEl);
+
+        console.log("content-tree: ", content_tree);
+        console.log("content-menu: ", component_menu);
+        renderMenu();
       } else {
-        //the dragged item should snap back to original position.
-        content_tree = JSON.parse(JSON.stringify(content_tree_backup));
+        // Handle drop in space - the dragged item should snap back to original position.
+        console.log("stop drag 2 - Drop in Space");
+        if (!is_menu_item) {
+          content_tree = JSON.parse(JSON.stringify(content_tree_backup));
+        }
         renderPage();
+        renderMenu();
         //that.checkForDropHover(null);
       } //hoverEl
 
       if (hoverEl) {
-        console.log("stop drag 2");
+        console.log("stop drag 3");
         draggedBlockConfig = null;
 
         // let s = document.getElementById("scene");
@@ -132,23 +143,32 @@ AFRAME.registerComponent("mover", {
   },
 
   startDrag: function (controlObject) {
-    console.log("startDrag() 1");
+    console.log("startDrag() 1", hoverEl.getAttribute("elementType"));
 
     is_dragging = true;
 
-    // I dont know why the dragged thing does nothing.AFRAME
-    hoverEl.setAttribute("material", "opacity", 0.5);
+    let is_menu_item =
+      hoverEl.getAttribute("elementType") === ELEMENT_TYPE_MENU;
+
+    hoverEl.setAttribute("material", "opacity", 0.1);
+    for (var i = 0; i < hoverEl.children.length; i++) {
+      let child = hoverEl.children[i];
+      child.setAttribute("material", "opacity", 0.1);
+      // console.log("child: ", i, child.classList);
+    }
     hoverEl.removeAttribute("outline");
 
     //attach item to controller to drag...
     let c2 = controlObject.object3D;
     let d = hoverEl.object3D;
     c2.attach(d);
-    console.log("start drag() 2");
+    console.log("startDrag()) 2");
 
     //remove from content tree
-    content_tree_backup = JSON.parse(JSON.stringify(content_tree));
-    // debugger;
+    if (!is_menu_item) {
+      content_tree_backup = JSON.parse(JSON.stringify(content_tree));
+    }
+
     t = hoverEl;
     var id = t.getAttribute("id").split("_")[0];
     console.log("hover id: " + id);
@@ -161,14 +181,22 @@ AFRAME.registerComponent("mover", {
     var i = parentArray.findIndex((c) => c.name == id);
     console.log("i: " + i);
 
-    draggedBlockConfig = parentArray[i];
+    // parentArray[i].tentative = true;
+    if (is_menu_item) {
+      //draggedBlockConfig is a CLONE, changes DONT affect the original.
+      let clone = JSON.parse(JSON.stringify(parentArray[i]));
+      draggedBlockConfig = clone;
+      draggedBlockConfig.name = draggedBlockConfig.name + "-" + index;
+    } else {
+      //draggedBlockConfig is a REFERENCE to the conenttree. Changes apply to it.
+      draggedBlockConfig = parentArray[i];
+    }
 
     draggedBlockConfig.tentative = true;
 
-    t.mode = "content-mode";
+    // Remove the item from the configuration. (If its not a menu)
 
-    //remove the item from the configuration.
-    if (t.mode == "content-mode") {
+    if (!is_menu_item) {
       // Take out of array.
       parentArray.splice(i, 1);
     }
@@ -187,10 +215,8 @@ AFRAME.registerComponent("mover", {
     // Create new element, copy the current one on it
     el.removeAttribute("outline");
     let newEl = cloneElement(el);
-    // let newEl = el.cloneNode();
     newEl.parentArray = el.parentArray;
 
-    //let newEl = generateElementFromContent(draggedBlockConfig, parentArray);
     newEl.setAttribute("id", "draggy");
     // Listener for location, rotation,... when the new el is laded
     relocate = function () {
@@ -304,7 +330,7 @@ function startDropHover(el) {
 }
 /**
  *
- * @param {*} id - Insert after element with this id.
+ * @param {*} id - Insert draggedBlockConfig after element with this id.
  */
 function insertBlockAfter(id) {
   console.log("insertBlockAfter: ", id);
@@ -316,7 +342,6 @@ function insertBlockAfter(id) {
   //Put the config in the content_tree.
   tentative_id = draggedBlockConfig.name;
   let clone = JSON.parse(JSON.stringify(draggedBlockConfig));
-  // clone.name = `${clone.name}-${element_count}`;
 
   console.log(content_tree);
   parentArray.splice(i + 1, 0, clone);
