@@ -11,7 +11,7 @@ function addDropTarget(parentEl, width) {
   targetEl.setAttribute("rotation", { x: 0, y: 0, z: 0 });
 
   targetEl.setAttribute("material", {
-    color: "#999",
+    color: DROP_TARGET_OFF_COLOR,
     side: "double",
     shader: "flat",
   });
@@ -70,7 +70,7 @@ function buildText(block, entityEl, width, height, elementType) {
   entityEl.appendChild(textEl);
 
   textEl.setAttribute("material", {
-    color: "#ddd",
+    color: "#fff",
     side: "double",
     shader: "flat",
   });
@@ -150,7 +150,7 @@ function renderBlock(
 
   entityEl.parentArray = parentArray;
 
-  entityEl.height = 0.5;
+  entityEl.height = DEFAULT_HEIGHT;
 
   entityEl.setAttribute("position", { x: x, y: y, z: z });
   entityEl.setAttribute("rotation", { x: 0, y: 0, z: 0 });
@@ -329,7 +329,7 @@ function widthOfAllPixels(content) {
 function createPageHolder(parentEl) {
   var el = document.createElement("a-entity");
   // var w = width - 0.03;
-  setGeoPlane(el, 2, 2);
+  setGeoPlane(el, PAGE_WIDTH, 2);
 
   // let y = 1;
   el.setAttribute("position", { x: PAGE_X, y: PAGE_Y, z: PAGE_Z });
@@ -350,14 +350,14 @@ function createPageHolder(parentEl) {
 function createMenuHolder(parentEl) {
   var el = document.createElement("a-entity");
   // var w = width - 0.03;
-  setGeoPlane(el, 2, 2);
+  setGeoPlane(el, MENU_WIDTH, 2);
 
   // let y = 1;
   el.setAttribute("position", { x: MENU_X, y: MENU_Y, z: MENU_Z });
   el.setAttribute("rotation", { x: 0, y: 0, z: 0 });
 
   el.setAttribute("material", {
-    color: "#855",
+    color: "#999",
     side: "double",
     shader: "flat",
   });
@@ -372,12 +372,17 @@ let pageHolder;
 let menuHolder;
 
 let PAGE_Y = 1;
-let PAGE_X = 0;
+let PAGE_X = 1;
 let PAGE_Z = -2;
+let PAGE_WIDTH = 1;
+
+let DEFAULT_HEIGHT = 0.5;
 
 let MENU_Y = 1;
-let MENU_X = -1.2;
+let MENU_X = -0.5;
 let MENU_Z = -1.9;
+
+let MENU_WIDTH = 0.5;
 
 // function clearRender() {
 //   pageHolder.innerHTML = ""; //remove all child elements.
@@ -387,12 +392,13 @@ function renderPage() {
   // renderItemContent(test_obj, 1, 1, 100, "horiz", null);
   // renderBlock(test_obj, 1, 1, 100, "horiz", null);
 
-  let parentBlock = pageHolder;
-  let x = 0;
-  let y = 0;
-  let z = 0.1;
   let width_to_share = 1.0;
   let orientation = "";
+
+  let parentBlock = pageHolder;
+  let x = 0 + width_to_share / 2;
+  let y = 0 + DEFAULT_HEIGHT + DEFAULT_HEIGHT / 2;
+  let z = 0.1;
 
   renderContent(
     parentBlock,
@@ -412,10 +418,10 @@ function renderMenu() {
   // renderBlock(test_obj, 1, 1, 100, "horiz", null);
 
   let parentBlock = menuHolder;
-  let x = 0;
-  let y = 0;
+  let x = 0 + MENU_WIDTH / 2;
+  let y = DEFAULT_HEIGHT + DEFAULT_HEIGHT / 2;
   let z = 0.11;
-  let width_to_share = 1.0;
+  //let width_to_share = 1.0;
   let orientation = "";
 
   renderContent(
@@ -424,7 +430,7 @@ function renderMenu() {
     x,
     y,
     z,
-    width_to_share,
+    MENU_WIDTH,
     orientation,
     ELEMENT_TYPE_MENU
   );

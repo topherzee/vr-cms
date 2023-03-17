@@ -21,26 +21,12 @@
   <body>
     <a-scene id="scene"  >
          <a-sky color="#111111"></a-sky>
-         <a-entity id="drag_parent" ></a-entity>
-
-         <!-- <a-box material="shader:my-custom-2; color:blue; opacity:0.7; transparent:true" position="0 0 -2"></a-box> -->
-         <!-- <a-box material="color:blue; opacity:0.7; transparent:true" outline="true" position="0 0 -2"></a-box> -->
-
-         <a-box id="box1" class = "movable " position="-1 0.5 -3" rotation="0 45 0" color="#4CC3D9" page></a-box>
-         
-         <a-box id="box-menu" class = "movable " position="1 0.5 -2" rotation="0 45 0" color="#900" menu></a-box>
+         <!-- <a-entity id="drag_parent" ></a-entity> -->
+         <a-entity id="page" page></a-entity>
+         <a-entity id="menu" menu></a-entity>
       
-      
-      <!-- <a-sphere id="sphere1" position="0 0.5 -5" radius="0.5" color="#EF2D5E"></a-sphere> -->
-      <a-cylinder id="cyl1" class = "movable 3d-movable" position="0 0 -3"  radius="0.5" height="1.5" color="#FFC65D" ></a-cylinder>
-      <!-- <a-plane position="0 0 -4" rotation="-90 0 0" width="4" height="4" color="#7BC8A4"></a-plane> -->
-
-
-      <!-- <a-entity id="box" position="-1 1.5 -2" cursor-listener geometry="primitive: box" material="color: blue"></a-entity> -->
-
-
-      <!-- <a-entity id="box2" cursor-listener geometry="primitive: box" material="color: blue"></a-entity> -->
-
+      <!-- <a-cylinder id="cyl1" class = "movable 3d-movable" position="0 0 -3"  radius="0.5" height="1.5" color="#FFC65D" ></a-cylinder> -->
+ 
       <a-entity camera look-controls wasd-controls remove-cursor>
         <a-entity id="cursor" cursor="fuse: true; fuseTimeout: 1000"
                   mover

@@ -8,6 +8,11 @@ let hoverDropEl = null;
 let is_dragging = false;
 let tentative_id = null;
 
+let HOVER_COLOR = "orange";
+let DROP_TARGET_COLOR = "orange";
+let DROP_TARGET_OFF_COLOR = "#999";
+let DRAG_COLOR = "blue";
+
 function getIntersectedItemWithClass(that, className) {
   let els = that.components.raycaster.intersectedEls;
   let dropEl = null;
@@ -228,7 +233,8 @@ AFRAME.registerComponent("mover", {
 
     hoverEl = newEl;
     hoverEl.removeAttribute("outline");
-    hoverEl.setAttribute("outline", "color:blue");
+    hoverEl.setAttribute("outline", "color:" + DRAG_COLOR);
+    // hoverEl.setAttribute("outline", "opacity:" + "0.1");
 
     controlObject.appendChild(newEl);
     el.parentElement.removeChild(el);
@@ -250,7 +256,7 @@ AFRAME.registerComponent("mover", {
     //cleaar the old one
     if (hoverEl) {
       // hoverEl.setAttribute("material", "emmisive", "#000");
-      hoverEl.setAttribute("material", "color", hoverColor);
+      // hoverEl.setAttribute("material", "color", hoverColor);
       hoverEl.removeAttribute("outline");
 
       hoverEl = null;
@@ -261,10 +267,10 @@ AFRAME.registerComponent("mover", {
     } else {
       //element is on top
       //activate the new one
-      hoverColor = el.getAttribute("color");
+      // hoverColor = el.getAttribute("color");
 
-      el.setAttribute("material", "color", "green");
-      el.setAttribute("outline", "color:orange");
+      // el.setAttribute("material", "color", "green");
+      el.setAttribute("outline", "color:" + HOVER_COLOR);
 
       hoverEl = el;
     }
@@ -315,7 +321,7 @@ function cloneElement(el) {
 
 function startDropHover(el) {
   console.log("startDropHover: ", el.id);
-  el.setAttribute("material", "color", "#9f9");
+  el.setAttribute("material", "color", DROP_TARGET_COLOR);
   hoverDropEl = el;
 
   // Put tentatative item in the config
@@ -356,7 +362,7 @@ function insertBlockAfter(id) {
 
 function stopDropHover() {
   console.log("stopDropHover()");
-  hoverDropEl.setAttribute("material", "color", "#999");
+  hoverDropEl.setAttribute("material", "color", DROP_TARGET_OFF_COLOR);
   //hoverDropEl = null;
 
   //let t = hoverDropEl;

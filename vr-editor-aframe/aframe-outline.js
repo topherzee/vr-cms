@@ -3,16 +3,18 @@
 AFRAME.registerComponent("outline", {
   schema: {
     color: { default: "red" },
-    scale: { default: 1.05 },
+    scale: { default: 1.1 },
     pulse: { default: false },
     frequency: { default: 1 },
+    opacity: { default: 1 },
   },
 
   init: function () {
     console.log("INIT OUTLINE 1");
     this.material = new THREE.MeshBasicMaterial({
       color: this.data.color,
-      side: THREE.BackSide,
+      side: "double",
+      transparent: true,
     });
     this.mesh = new THREE.Mesh(
       this.el.components.geometry.geometry,
@@ -27,6 +29,12 @@ AFRAME.registerComponent("outline", {
 
   setColor: function (color) {
     this.material.color.set(color);
+    this.material.opacity.set(0.1);
+    this.material.needsUpdate = true;
+  },
+
+  setOpacity: function (opacity) {
+    this.material.opacity.set(0.1);
     this.material.needsUpdate = true;
   },
 

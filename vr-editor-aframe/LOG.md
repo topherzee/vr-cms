@@ -1,3 +1,7 @@
+2023-03-17
+Clean up visuaals for show and tell.
+Standardized colors. Got the Outline to be transparent.
+
 Current problem - when you let go of the item it should dissapear - the draaggy, but now it creates a hole in the layout.
 
 2023-03-07
