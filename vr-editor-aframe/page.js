@@ -371,14 +371,14 @@ function createMenuHolder(parentEl) {
 let pageHolder;
 let menuHolder;
 
-let PAGE_Y = 1;
+let PAGE_Y = 0;
 let PAGE_X = 1;
 let PAGE_Z = -2;
 let PAGE_WIDTH = 1;
 
 let DEFAULT_HEIGHT = 0.5;
 
-let MENU_Y = 1;
+let MENU_Y = 0;
 let MENU_X = -0.5;
 let MENU_Z = -1.9;
 

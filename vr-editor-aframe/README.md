@@ -11,6 +11,7 @@ Go to chrome://inspect#devices
 ----
 TODO:
 
+Auto-Detect VR/Desktop. Enable controls appropriately.
 Throw item to get rid of it. (fun)
 Add imaage to one of the components.
 Add a Magnolia header to the very top.

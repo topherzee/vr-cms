@@ -25,13 +25,56 @@ function getIntersectedItemWithClass(that, className) {
   }
   return dropEl;
 }
+let POS_LEN = 30;
 
 AFRAME.registerComponent("mover", {
+  tick: function (time, timeDelta) {
+    // IN_PROGRESS
+    // if (time - this.lastTime < 100) {
+    //   return;
+    // }
+    // this.lastTime = time;
+    // console.log(this.pos_prev.x.toFixed(3), "-", this.pos_diff.x.toFixed(3));
+    // this.pos_diff.copy(this.el.object3D.position);
+    // this.pos_diff.sub(this.pos_prev);
+    // this.pos_prev.copy(this.el.object3D.position);
+    // var distance = this.pos_diff.length();
+    // this.speed = distance;
+    // let c = document.getElementById("cyl-1");
+    // if (distance > 0) {
+    //   console.log("MOVE:" + distance.toFixed(5));
+    //   c.setAttribute("material", "color", "green");
+    // } else {
+    //   c.setAttribute("material", "color", "red");
+    // }
+  },
   init: function () {
     let that = this;
     this.setHover = this.setHover.bind(this);
     this.setColors = this.setColors.bind(this);
     this.startDrag = this.startDrag.bind(this);
+
+    this.pos_diff = new THREE.Vector3();
+    this.pos_prev = new THREE.Vector3();
+    this.speed = 0;
+    //this.pos_prev = this.el.object3D.position;
+    // this.a_pos = [];
+    this.lastTime = 0;
+
+    // IN PROGRESS
+    this.el.addEventListener("controllerconnected", function (evt) {
+      console.log("Controlller CONNECRED");
+
+      //Remove the Gaze cursor.
+      let c = document.getElementById("cursor");
+      if (c) {
+        c.parentElement.removeChild(c);
+      }
+    });
+
+    // this.el.addEventListener("controllerconnected", function (evt) {
+    //   console.log("controllerdisconnected DISCONNECRED");
+    // });
 
     this.el.addEventListener("raycaster-intersection", function (event) {
       if (is_dragging) {
@@ -106,14 +149,25 @@ AFRAME.registerComponent("mover", {
         console.log("content-menu: ", component_menu);
         renderMenu();
       } else {
-        // Handle drop in space - the dragged item should snap back to original position.
-        console.log("stop drag 2 - Drop in Space");
+        // Check Speed of hand. If fast throw the object. IN_PROGRESS.
+
+        // if (this.speed > 0.001) {
+        //   // Handle drop in space - the dragged item should snap back to original position.
+        //   console.log("stop drag 2 - Throw in Space");
+        //   //JUST DROP ITEM in 3D Space...
+        //   let s = document.getElementById("pageHolder"); //or to the scene itself?
+        //   let s2 = s.object3D;
+        //   s2.attach(hoverEl.object3D);
+        // } else {
+
+        //   //that.checkForDropHover(null);
+        // }
+        // Put the item back where it was.
         if (!is_menu_item) {
           content_tree = JSON.parse(JSON.stringify(content_tree_backup));
         }
         renderPage();
         renderMenu();
-        //that.checkForDropHover(null);
       } //hoverEl
 
       if (hoverEl) {
@@ -121,11 +175,9 @@ AFRAME.registerComponent("mover", {
         draggedBlockConfig = null;
 
         // let s = document.getElementById("scene");
-
-        // Current problem - when you let go of the item it should dissapear - the draaggy, but now it creates a hole in the layout.
         //KILL DRAGGY
         if (hoverEl.classList.contains("3d-movable")) {
-          //OR IF WE WANTED TO DROP ITEM in 3D Space...
+          //JUST DROP ITEM in 3D Space...
           let s = document.getElementById("pageHolder"); //or to the scene itself?
           let s2 = s.object3D;
           s2.attach(hoverEl.object3D);

@@ -1,3 +1,8 @@
+2023-03-31
+WOrk on: Auto-Detect VR/Desktop. Enable controls appropriately.
+https://immersive-web.github.io/webxr/input-explainer.html
+
+
 2023-03-17
 Clean up visuaals for show and tell.
 Standardized colors. Got the Outline to be transparent.
