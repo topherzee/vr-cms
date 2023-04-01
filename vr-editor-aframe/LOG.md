@@ -1,6 +1,16 @@
+
+2023-04-01
+
+Throwing works!
+
 2023-03-31
 WOrk on: Auto-Detect VR/Desktop. Enable controls appropriately.
 https://immersive-web.github.io/webxr/input-explainer.html
+
+Tricky - sometimes the hoveritem does not show in VR (but works on desktop)
+Seems related to trying to hide the cursor and failing.
+If you comment out of index.html then it works.
+ <a-entity id="cursor"
 
 
 2023-03-17

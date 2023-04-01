@@ -28,38 +28,12 @@ function getIntersectedItemWithClass(that, className) {
 let POS_LEN = 30;
 
 AFRAME.registerComponent("mover", {
-  tick: function (time, timeDelta) {
-    // IN_PROGRESS
-    // if (time - this.lastTime < 100) {
-    //   return;
-    // }
-    // this.lastTime = time;
-    // console.log(this.pos_prev.x.toFixed(3), "-", this.pos_diff.x.toFixed(3));
-    // this.pos_diff.copy(this.el.object3D.position);
-    // this.pos_diff.sub(this.pos_prev);
-    // this.pos_prev.copy(this.el.object3D.position);
-    // var distance = this.pos_diff.length();
-    // this.speed = distance;
-    // let c = document.getElementById("cyl-1");
-    // if (distance > 0) {
-    //   console.log("MOVE:" + distance.toFixed(5));
-    //   c.setAttribute("material", "color", "green");
-    // } else {
-    //   c.setAttribute("material", "color", "red");
-    // }
-  },
+  tick: function (time, timeDelta) {},
   init: function () {
     let that = this;
     this.setHover = this.setHover.bind(this);
     this.setColors = this.setColors.bind(this);
     this.startDrag = this.startDrag.bind(this);
-
-    this.pos_diff = new THREE.Vector3();
-    this.pos_prev = new THREE.Vector3();
-    this.speed = 0;
-    //this.pos_prev = this.el.object3D.position;
-    // this.a_pos = [];
-    this.lastTime = 0;
 
     // IN PROGRESS
     this.el.addEventListener("controllerconnected", function (evt) {
@@ -87,6 +61,8 @@ AFRAME.registerComponent("mover", {
         let el = getIntersectedItemWithClass(this, "movable");
         //let el = this.components.raycaster.intersectedEls[0] || null;
         // console.log("intersect. Top: ", el.id); //event.detail.intersection.point);
+
+        //IN_PROGRESS
         that.setHover(el);
       }
     });
@@ -104,7 +80,8 @@ AFRAME.registerComponent("mover", {
         // let el = this.components.raycaster.intersectedEls[0] || null;
         let el = getIntersectedItemWithClass(this, "movable");
         let id = el ? el.id : "nothing";
-        console.log("mover cleared. Top: ", id); //event.detail.intersection.point);
+        console.log("RAYCASTER cleared. Top: ", id); //event.detail.intersection.point);
+        // (IN_PROGRESS)
         that.setHover(el);
       }
     );
@@ -126,6 +103,8 @@ AFRAME.registerComponent("mover", {
       if (!is_dragging) {
         return;
       }
+
+      let is_thrown = false;
       is_dragging = false;
       tentative_id = null;
       hoverEl.setAttribute("material", "opacity", 1.0);
@@ -134,7 +113,7 @@ AFRAME.registerComponent("mover", {
 
       //If hovering on drop target - Put the item there.
       if (hoverDropEl) {
-        console.log("stop drag 1 - Drop on Item");
+        console.log("StopDrag 1 - Drop on Item");
         // Handle drop on target!
         // Change the tentative item into fixed item.
         let id = getId(hoverDropEl);
@@ -149,52 +128,72 @@ AFRAME.registerComponent("mover", {
         console.log("content-menu: ", component_menu);
         renderMenu();
       } else {
+        // Not dropped on Target.
+
         // Check Speed of hand. If fast throw the object. IN_PROGRESS.
+        var speed = hoverEl.components.throwable.speed;
+        console.log("WORKING HERE");
+        console.log("HOVER SPEED: ", speed);
 
-        // if (this.speed > 0.001) {
-        //   // Handle drop in space - the dragged item should snap back to original position.
-        //   console.log("stop drag 2 - Throw in Space");
-        //   //JUST DROP ITEM in 3D Space...
-        //   let s = document.getElementById("pageHolder"); //or to the scene itself?
-        //   let s2 = s.object3D;
-        //   s2.attach(hoverEl.object3D);
-        // } else {
-
-        //   //that.checkForDropHover(null);
-        // }
-        // Put the item back where it was.
-        if (!is_menu_item) {
-          content_tree = JSON.parse(JSON.stringify(content_tree_backup));
-        }
-        renderPage();
-        renderMenu();
-      } //hoverEl
-
-      if (hoverEl) {
-        console.log("stop drag 3");
-        draggedBlockConfig = null;
-
-        // let s = document.getElementById("scene");
-        //KILL DRAGGY
-        if (hoverEl.classList.contains("3d-movable")) {
-          //JUST DROP ITEM in 3D Space...
+        if (speed > 0.01) {
+          // Handle Throw - the dragged item should snap back to original position.
+          console.log("StopDrag 2 - Throw in Space");
+          let vel_local = hoverEl.components.throwable.velocity;
+          console.log(
+            "vel:" +
+              JSON.stringify(hoverEl.components.throwable.velocity, null, 2)
+          );
           let s = document.getElementById("pageHolder"); //or to the scene itself?
           let s2 = s.object3D;
+
           s2.attach(hoverEl.object3D);
-        } else {
-          console.log("KILL DRAGGY");
+
+          is_thrown = true;
+
+          hoverEl.setAttribute("throwable", {
+            flying: true,
+          });
 
           let d = document.getElementById("draggy");
-          hoverEl.parentElement.removeChild(hoverEl);
-          hoverEl = null;
-        }
+          let throwEl = cloneElement(d);
+          throwEl.setAttribute("id", "thrown");
+          // throwEl.setAttribute("material", "color", "red");
+          s.appendChild(throwEl);
 
-        console.log("stop drag 3");
+          throwEl.setAttribute("throwable", {
+            vel: vel_local,
+          });
+
+          console.log("StopDrag 2 b");
+        } else {
+          // Slow - Put the item back where it was.
+          console.log("StopDrag 3 - Slow No Throw");
+
+          if (!is_menu_item) {
+            content_tree = JSON.parse(JSON.stringify(content_tree_backup));
+          }
+        }
+      } //hoverEl - Not dropped on Target.
+
+      renderPage();
+      renderMenu();
+
+      if (hoverEl) {
+        console.log("StopDrag 4");
+        draggedBlockConfig = null;
+
+        if (true || !is_thrown) {
+          console.log("KILL DRAGGY");
+          let d = document.getElementById("draggy");
+          hoverEl.parentElement.removeChild(hoverEl);
+          that.setHover(null);
+        }
       } else {
+        console.log("stop drag 4 B");
+
         //if there was no hover... check if we are now intersecting something
         let el = this.components.raycaster.intersectedEls[0] || null;
         console.log("mover mouseup. Top: ", el ? el.id : "nothing"); //event.detail.intersection.point);
-        that.setHover(el);
       }
     });
   },
@@ -280,12 +279,15 @@ AFRAME.registerComponent("mover", {
       newEl.object3D.location = location;
       newEl.object3D.rotation = rotation;
       newEl.object3D.scale = scale;
+      // newEl.setAttribute("throwable", "");
     };
     newEl.addEventListener("loaded", relocate, { once: true });
 
     hoverEl = newEl;
     hoverEl.removeAttribute("outline");
     hoverEl.setAttribute("outline", "color:" + DRAG_COLOR);
+    hoverEl.setAttribute("throwable", "");
+
     // hoverEl.setAttribute("outline", "opacity:" + "0.1");
 
     controlObject.appendChild(newEl);
@@ -297,7 +299,7 @@ AFRAME.registerComponent("mover", {
   },
 
   setHover: function (el) {
-    //console.log("setHover() 1");
+    console.log("setHover() 1");
 
     if (is_dragging) {
       return;

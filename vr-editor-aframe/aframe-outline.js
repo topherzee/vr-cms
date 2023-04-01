@@ -10,7 +10,7 @@ AFRAME.registerComponent("outline", {
   },
 
   init: function () {
-    console.log("INIT OUTLINE 1");
+    // console.log("INIT OUTLINE 1");
     this.material = new THREE.MeshBasicMaterial({
       color: this.data.color,
       side: "double",
@@ -24,7 +24,7 @@ AFRAME.registerComponent("outline", {
     this.mesh.scale.multiplyScalar(this.scale);
     this.el.object3D.add(this.mesh);
     this.frequency = this.data.frequency;
-    console.log("INIT OUTLINE 2");
+    // console.log("INIT OUTLINE 2");
   },
 
   setColor: function (color) {
@@ -47,7 +47,7 @@ AFRAME.registerComponent("outline", {
 
   remove: function () {
     // console.log("REMOVE HOVER 2");
-    console.log("REMOVE OUTLINE");
+    // console.log("REMOVE OUTLINE");
     this.el.object3D.remove(this.mesh);
   },
 

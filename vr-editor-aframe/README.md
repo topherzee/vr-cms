@@ -11,7 +11,6 @@ Go to chrome://inspect#devices
 ----
 TODO:
 
-Auto-Detect VR/Desktop. Enable controls appropriately.
 Throw item to get rid of it. (fun)
 Add imaage to one of the components.
 Add a Magnolia header to the very top.
@@ -19,10 +18,19 @@ Add an App header to the top of the two apps.
 Add assets app.
 Support dragging asset onto page.
 
+Clean up code. Encapsulate. Clear API.
+
 Drag and Drop Page and Component Menu?
 Ability to place things in 3d instead of only "in the grid."
 Animate item snaapping baack into place if not used.
 
+----
+Handling Letting Go.
+* If over drop target, then place the item. (If menu_item - then repopulate)
+* If not over drop target,
+    * If slow, then Move the item back.
+    * If fast, then throw the item.
+        * If menu_item - then repopulate.
 ----
 
 How the Dragging works in 3D:

@@ -37,7 +37,7 @@ function buildText(block, entityEl, width, height, elementType) {
     shader: "flat",
   });
   //entityEl.setAttribute("position", { x: 0, y: 0, z: 0.01 });
-  console.log("buildText. elementType:" + elementType);
+  //console.log("buildText. elementType:" + elementType);
   entityEl.setAttribute("elementType", elementType);
 
   var isHeader = block["text"].indexOf("<h2>") > -1;
@@ -379,7 +379,7 @@ let PAGE_WIDTH = 1;
 let DEFAULT_HEIGHT = 0.5;
 
 let MENU_Y = 0;
-let MENU_X = -0.5;
+let MENU_X = 0; //-0.5;
 let MENU_Z = -1.9;
 
 let MENU_WIDTH = 0.5;
