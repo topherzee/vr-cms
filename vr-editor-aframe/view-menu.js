@@ -67,8 +67,6 @@ function createMenuHolder(parentEl) {
 
 function renderMenu() {
   console.log("renderMenu()");
-  // renderItemContent(test_obj, 1, 1, 100, "horiz", null);
-  // renderBlock(test_obj, 1, 1, 100, "horiz", null);
 
   let parentBlock = menuHolder;
   let x = 0 + MENU_WIDTH / 2;

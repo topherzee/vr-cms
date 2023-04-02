@@ -127,6 +127,7 @@ AFRAME.registerComponent("mover", {
         console.log("content-tree: ", content_tree);
         console.log("content-menu: ", component_menu);
         renderMenu();
+        renderViewAssets();
       } else {
         // Not dropped on Target.
 
@@ -177,6 +178,7 @@ AFRAME.registerComponent("mover", {
 
       renderPage();
       renderMenu();
+      renderViewAssets();
 
       if (hoverEl) {
         console.log("StopDrag 4");

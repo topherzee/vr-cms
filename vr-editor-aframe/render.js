@@ -125,6 +125,7 @@ function generateElementFromContent(block, parentArray) {
     0,
     -1,
     width,
+    DEFAULT_HEIGHT,
     orientation,
     parentArray,
     parentBlock,
@@ -140,6 +141,7 @@ function renderBlock(
   y,
   z,
   width,
+  height,
   orientation,
   parentArray,
   parentBlock,
@@ -157,11 +159,9 @@ function renderBlock(
 
   var type = block.type;
 
-  //console.log("renderBlock type:" + type);
-
   entityEl.parentArray = parentArray;
 
-  entityEl.height = DEFAULT_HEIGHT;
+  entityEl.height = height;
 
   entityEl.setAttribute("position", { x: x, y: y, z: z });
   entityEl.setAttribute("rotation", { x: 0, y: 0, z: 0 });
@@ -269,6 +269,7 @@ function renderContent(
       y,
       z,
       width,
+      DEFAULT_HEIGHT,
       orientation,
       content,
       parentBlock,

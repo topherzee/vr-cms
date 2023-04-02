@@ -34,8 +34,6 @@ function createPageHolder(parentEl) {
 
 function renderPage() {
   console.log("renderPage()");
-  // renderItemContent(test_obj, 1, 1, 100, "horiz", null);
-  // renderBlock(test_obj, 1, 1, 100, "horiz", null);
 
   let width_to_share = 1.0;
   let orientation = "";
@@ -62,7 +60,6 @@ AFRAME.registerComponent("page", {
     //this.originalRotation = this.el.object3D.rotation.y;
 
     var sceneEl = document.querySelector("a-scene");
-    //renderBlock(test_obj, 0, sceneEl, 0);
 
     pageHolder = createPageHolder(sceneEl);
 
