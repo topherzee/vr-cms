@@ -47,6 +47,13 @@ function buildText(block, entityEl, width, height, elementType) {
     side: "double",
     shader: "flat",
   });
+
+  // entityEl.setAttribute("material", {
+  //   color: "green",
+  //   side: "double",
+  //   shader: "flat",
+  // });
+
   //entityEl.setAttribute("position", { x: 0, y: 0, z: 0.01 });
   //console.log("buildText. elementType:" + elementType);
   entityEl.setAttribute("elementType", elementType);
@@ -106,6 +113,73 @@ function buildText(block, entityEl, width, height, elementType) {
       "side: front; color: black; wrap-count: 20;   value: " + text
     );
   }
+}
+
+function buildAsset(block, entityEl, width, height, elementType) {
+  //Base component must be a box otherwise the OUTLINE will not function properly.
+  entityEl.setAttribute("geometry", {
+    primitive: "box",
+    width: width,
+    height: height,
+    depth: THICKNESS,
+  });
+  entityEl.setAttribute("material", {
+    color: "#ddd",
+    side: "double",
+    shader: "flat",
+  });
+
+  //  var url = "images/magnolia-header.jpg";
+  //CORS !!!
+  // var url =
+  //   "https://demopublic.magnolia-cms.com/.imaging/mte/travel-demo-theme/960x720/dam/tours/flickr_beach_greece_horia_varlan_by20_4332387580_dc593654a3_o.jpg/jcr:content/flickr_beach_greece_horia_varlan_by20_4332387580_dc593654a3_o.jpg";
+  // var url = "images/tours-test/" + tour_images[0];
+  var url = block.image;
+
+  entityEl.setAttribute("material", "src", "url(" + url + ")");
+
+  entityEl.setAttribute("elementType", elementType);
+
+  var text = htmlToText(block["text"]);
+
+  var textEl;
+
+  //if we already have a text - dont make another one. //But changge text if need be.
+  if (entityEl.querySelector(".text")) {
+    textEl = entityEl.querySelector(".text");
+    textEl.setAttribute("text", "value: " + text);
+    return;
+  } else {
+    textEl = document.createElement("a-entity");
+  }
+
+  textEl.classList.add("text");
+
+  textEl.setAttribute("geometry", {
+    primitive: "plane",
+    width: width,
+    height: height / 4,
+  });
+  textEl.setAttribute("position", {
+    x: 0,
+    y: -height / 2,
+    z: THICKNESS / 2 + 0.01,
+  });
+  entityEl.appendChild(textEl);
+
+  textEl.setAttribute("material", {
+    color: "#fff",
+    side: "double",
+    shader: "flat",
+  });
+  //console.log(" text:" + text);
+
+  entityEl.height = 0.5;
+
+  textEl.setAttribute(
+    "text",
+    "side: front; color: black; wrap-count: 20;   value: " + text
+  );
 }
 
 function buildGeneric(block, entityEl, width, height) {
@@ -175,6 +249,8 @@ function renderBlock(
       return false;
     }
     buildText(block, entityEl, width, entityEl.height, elementType);
+  } else if (type == "asset") {
+    buildAsset(block, entityEl, width, entityEl.height, elementType);
   } else {
     console.log("index:" + index + "item type not supported:" + type);
     buildGeneric(block, entityEl, width, entityEl.height, elementType);
