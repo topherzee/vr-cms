@@ -1,7 +1,9 @@
 <html>
   <head>
     <script src="aframe140.min.js"></script>
-    <script src="page.js"></script>
+    <script src="render.js"></script>
+    <script src="view-page.js"></script>
+    <script src="view-menu.js"></script>
     <script src="click-listen.js"></script> 
     <script src="throwable.js"></script> 
     <!-- <script src="shaders.js"></script>  -->
@@ -110,18 +112,18 @@
          <a-cylinder id="cyl-2" class = "movable 3d-movable" position="0 0 -3"  radius="0.5" height="1.5" color="#FFC65D" ></a-cylinder>
  
       <a-entity camera look-controls wasd-controls remove-cursor>
-        <!-- <a-entity id="cursor" cursor="fuse: true; fuseTimeout: 1000"
+        <a-entity id="cursor" cursor="fuse: true; fuseTimeout: 1000"
                   mover
                   position="0 0 -1"
                   rayOrigin: mouse
                   raycaster="objects: .movable, .droptarget; far: 5;"
                   geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
                   material="color: blue; shader: flat">
-        </a-entity> -->
+        </a-entity>
       </a-entity>
       
-      <a-entity laser-controls="hand: left" raycaster="objects: .movable, .droptarget; far: 5;" mover></a-entity>
-      <a-entity laser-controls="hand: right"  raycaster="objects: .movable, .droptarget; far: 5;" mover></a-entity>
+      <!-- <a-entity laser-controls="hand: left" raycaster="objects: .movable, .droptarget; far: 5;" mover></a-entity>
+      <a-entity laser-controls="hand: right"  raycaster="objects: .movable, .droptarget; far: 5;" mover></a-entity> -->
 
      
     </a-scene>

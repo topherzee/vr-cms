@@ -2,6 +2,7 @@
 
 2023-04-02
 Fast load of header images.
+Refactor "page.js" into render.js, view-page.js, view-menu.js .. in preparation for adding assets.
 
 2023-04-01
 
