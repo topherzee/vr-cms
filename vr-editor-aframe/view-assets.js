@@ -3,8 +3,11 @@ let ASSET_X = -0.8; //-0.5;
 let ASSET_Z = -1.9;
 
 let ASSET_WIDTH = 0.2;
-let ASSET_HEIGHT = 0.3;
+let ASSET_HEIGHT = 0.2;
 let ASSET_PANEL_WIDTH = 0.6;
+
+//Assumption about aall imported images.
+const IMAGE_ASPECT_RATIO = 4 / 3;
 
 let assetsHolder;
 
@@ -111,6 +114,8 @@ function renderContentGrid(
 }
 
 var tour_images = [
+  "tall-centered-image.jpg",
+  "paris_eiffel_Louis Pellissier_IMG_8643.jpeg",
   "vietnam_jan_16323513143_82062f3a9a_k.jpeg",
   "flickr_amazon_zach_dischner_by20_13317569555_7d567284b3_k.jpeg",
   "flickr_angkor_chi_king_1071292582_1ed88ac42f_o.jpeg",
@@ -138,8 +143,9 @@ var tour_images = [
 
 //"flickr_iran_ninara_by20_13974556578_ee8d3923c0_k.jpeg",
 
+const MAX_ASSETS = 20; //20
 var assets_content = [];
-for (i = 0; i < 20; i++) {
+for (i = 0; i < MAX_ASSETS; i++) {
   let node = {
     name: "Asset-m" + i,
     type: "asset",

@@ -1,8 +1,17 @@
 
+2023-04-16
+Asset sizing.
+GGood resource: https://github.com/nylki/aframe-fit-texture-component/
+But in the end I used texture repeat and offset to solve it well enough.
+Next step would be to actually detect image ratio instead of hardcoding 4:3.
+
 
 2023-04-02
 Fast load of header images.
 Refactor "page.js" into render.js, view-page.js, view-menu.js .. in preparation for adding assets.
+Render Assets!
+Add assets app.
+Support dragging asset onto page.
 
 2023-04-01
 

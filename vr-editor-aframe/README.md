@@ -11,11 +11,14 @@ Go to chrome://inspect#devices
 ----
 TODO:
 
+Render images at proper aspect ratio. (How?)
+Next step would be to actually detect image ratio instead of hardcoding 4:3.
 
-Add imaage to one of the components.
+Add a tours app. (List view)
+
+Add reaistic dummy componenets. (Travel demo?)
+
 Add an App header to the top of the two apps.
-Add assets app.
-Support dragging asset onto page.
 
 Clean up code. Encapsulate. Clear API.
 

@@ -115,6 +115,7 @@ function buildText(block, entityEl, width, height, elementType) {
   }
 }
 
+//Method is ugly - but it works!
 function buildAsset(block, entityEl, width, height, elementType) {
   //Base component must be a box otherwise the OUTLINE will not function properly.
   entityEl.setAttribute("geometry", {
@@ -134,9 +135,64 @@ function buildAsset(block, entityEl, width, height, elementType) {
   // var url =
   //   "https://demopublic.magnolia-cms.com/.imaging/mte/travel-demo-theme/960x720/dam/tours/flickr_beach_greece_horia_varlan_by20_4332387580_dc593654a3_o.jpg/jcr:content/flickr_beach_greece_horia_varlan_by20_4332387580_dc593654a3_o.jpg";
   // var url = "images/tours-test/" + tour_images[0];
-  var url = block.image;
+  var imageEl;
+  //if we already have a text - dont make another one. //But changge text if need be.
+  if (entityEl.querySelector(".asset-image")) {
+    imageEl = entityEl.querySelector(".asset-image");
+    // imageEl.setAttribute("text", "value: " + text);
+    return;
+  } else {
+    imageEl = document.createElement("a-entity");
+  }
+  imageEl.classList.add("asset_image");
 
-  entityEl.setAttribute("material", "src", "url(" + url + ")");
+  // imageEl.setAttribute("geometry", {
+  //   primitive: "plane",
+  //   width: width,
+  //   height: width / IMAGE_ASPECT_RATIO,
+  // });
+
+  //CROPPING
+  let blockRatio = width / height;
+  let repeat;
+  let offset;
+  if (IMAGE_ASPECT_RATIO > blockRatio) {
+    //crop off sides.
+    let r = blockRatio / IMAGE_ASPECT_RATIO;
+    repeat = { x: r, y: 1 };
+    offset = { x: 0.5 - 0.5 * r, y: 0 };
+    // offset = { x: 0.4, y: 0 };
+  } else {
+    // crop off top & bottom
+    let r = IMAGE_ASPECT_RATIO / blockRatio;
+    repeat = { x: 1, y: r };
+    offset = { x: 0, y: 0.5 - 0.5 * r };
+  }
+
+  imageEl.setAttribute("geometry", {
+    primitive: "plane",
+    width: width,
+    height: height,
+  });
+  imageEl.setAttribute("position", {
+    x: 0,
+    y: 0,
+    z: THICKNESS / 2 + 0.01,
+  });
+
+  entityEl.appendChild(imageEl);
+
+  var url = block.image;
+  // imageEl.setAttribute("material", "src", "url(" + url + ")");
+
+  imageEl.setAttribute("material", {
+    color: "#ddd",
+    side: "double",
+    shader: "flat",
+    repeat: repeat,
+    offset: offset,
+    src: `url(${url})`,
+  });
 
   entityEl.setAttribute("elementType", elementType);
 
@@ -152,9 +208,7 @@ function buildAsset(block, entityEl, width, height, elementType) {
   } else {
     textEl = document.createElement("a-entity");
   }
-
   textEl.classList.add("text");
-
   textEl.setAttribute("geometry", {
     primitive: "plane",
     width: width,
@@ -162,8 +216,8 @@ function buildAsset(block, entityEl, width, height, elementType) {
   });
   textEl.setAttribute("position", {
     x: 0,
-    y: -height / 2,
-    z: THICKNESS / 2 + 0.01,
+    y: -height / 2 + height / 4 - height / 8,
+    z: THICKNESS / 2 + 0.01 + 0.01,
   });
   entityEl.appendChild(textEl);
 
