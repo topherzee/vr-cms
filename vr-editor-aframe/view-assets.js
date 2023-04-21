@@ -12,10 +12,9 @@ const IMAGE_ASPECT_RATIO = 4 / 3;
 let assetsHolder;
 
 AFRAME.registerComponent("view-assets", {
-  init: function () {
+  init: async function () {
     var sceneEl = document.querySelector("a-scene");
     assetsHolder = createAssetsHolder(sceneEl);
-
     renderViewAssets();
   },
 

@@ -34,7 +34,7 @@ function addDropTarget(parentEl, width) {
   parentEl.appendChild(targetEl);
 }
 
-function buildText(block, entityEl, width, height, elementType) {
+function buildText(block, entityEl, width, height, elementType, wrapCount) {
   //Base component must be a box otherwise the OUTLINE will not function properly.
   entityEl.setAttribute("geometry", {
     primitive: "box",
@@ -94,8 +94,6 @@ function buildText(block, entityEl, width, height, elementType) {
   });
   //console.log(" text:" + text);
 
-  entityEl.height = 0.5;
-
   // console.log("TEXT: ", entityEl.components.text);
   // if (entityEl.components.text) {
   //   console.log("TEXT: REMOVE");
@@ -105,14 +103,64 @@ function buildText(block, entityEl, width, height, elementType) {
   if (isHeader) {
     textEl.setAttribute(
       "text",
-      "side: front; color: black; align: center; wrap-count: 20; value: " + text
+      `side: front; color: black; align: center; wrap-count: ${wrapCount}; value:${text}`
     );
   } else {
     textEl.setAttribute(
       "text",
-      "side: front; color: black; wrap-count: 20;   value: " + text
+      `side: front; color: black; wrap-count: ${wrapCount}; value:${text}`
     );
   }
+}
+
+function addTextColumn(
+  entityEl,
+  width,
+  height,
+  ratio,
+  columnName,
+  text,
+  wrapCount
+) {
+  var textEl;
+
+  //if we already have a text - dont make another one. //But changge text if need be.
+  if (entityEl.querySelector(`.text-${columnName}`)) {
+    textEl = entityEl.querySelector(`.text-${columnName}`);
+    //textEl.setAttribute("text", "value: " + text);
+    textEl.setAttribute("text", "value: " + text);
+    return;
+  } else {
+    textEl = document.createElement("a-entity");
+  }
+
+  textEl.classList.add(`.text-${columnName}`);
+
+  textEl.setAttribute("position", {
+    x: 0 + ratio * width * 2,
+    y: 0,
+    z: THICKNESS / 2 + 0.01,
+  });
+
+  textEl.setAttribute("material", {
+    color: "#fff",
+    side: "double",
+    shader: "flat",
+  });
+
+  textEl.setAttribute("geometry", {
+    primitive: "plane",
+    width: width,
+    height: height,
+  });
+  console.log("HEIGHT:", height);
+
+  textEl.setAttribute(
+    "text",
+    `side: front; color: black; align: left; wrap-count: ${wrapCount}; value:${text}`
+  );
+
+  entityEl.appendChild(textEl);
 }
 
 //Method is ugly - but it works!
@@ -136,38 +184,16 @@ function buildAsset(block, entityEl, width, height, elementType) {
   //   "https://demopublic.magnolia-cms.com/.imaging/mte/travel-demo-theme/960x720/dam/tours/flickr_beach_greece_horia_varlan_by20_4332387580_dc593654a3_o.jpg/jcr:content/flickr_beach_greece_horia_varlan_by20_4332387580_dc593654a3_o.jpg";
   // var url = "images/tours-test/" + tour_images[0];
   var imageEl;
-  //if we already have a text - dont make another one. //But changge text if need be.
-  if (entityEl.querySelector(".asset-image")) {
-    imageEl = entityEl.querySelector(".asset-image");
-    // imageEl.setAttribute("text", "value: " + text);
-    return;
-  } else {
-    imageEl = document.createElement("a-entity");
-  }
-  imageEl.classList.add("asset_image");
+  //if we already have a image - dont make another one. //But changge text if need be.
+  // if (entityEl.querySelector(".asset-image")) {
+  //   imageEl = entityEl.querySelector(".asset-image");
+  //   return;
+  // } else {
+  //   imageEl = document.createElement("a-entity");
+  // }
+  // imageEl.classList.add("asset-image");
 
-  // imageEl.setAttribute("geometry", {
-  //   primitive: "plane",
-  //   width: width,
-  //   height: width / IMAGE_ASPECT_RATIO,
-  // });
-
-  //CROPPING
-  let blockRatio = width / height;
-  let repeat;
-  let offset;
-  if (IMAGE_ASPECT_RATIO > blockRatio) {
-    //crop off sides.
-    let r = blockRatio / IMAGE_ASPECT_RATIO;
-    repeat = { x: r, y: 1 };
-    offset = { x: 0.5 - 0.5 * r, y: 0 };
-    // offset = { x: 0.4, y: 0 };
-  } else {
-    // crop off top & bottom
-    let r = IMAGE_ASPECT_RATIO / blockRatio;
-    repeat = { x: 1, y: r };
-    offset = { x: 0, y: 0.5 - 0.5 * r };
-  }
+  imageEl = document.createElement("a-entity");
 
   imageEl.setAttribute("geometry", {
     primitive: "plane",
@@ -180,17 +206,21 @@ function buildAsset(block, entityEl, width, height, elementType) {
     z: THICKNESS / 2 + 0.01,
   });
 
+  //force geometry to update.
+  imageEl.setAttribute("fit-image", {
+    updater: Date.now(),
+  });
+
   entityEl.appendChild(imageEl);
 
   var url = block.image;
-  // imageEl.setAttribute("material", "src", "url(" + url + ")");
 
   imageEl.setAttribute("material", {
     color: "#ddd",
     side: "double",
     shader: "flat",
-    repeat: repeat,
-    offset: offset,
+    repeat: { x: 1, y: 1 },
+    offset: { x: 0, y: 0 },
     src: `url(${url})`,
   });
 
@@ -302,7 +332,19 @@ function renderBlock(
       //console.log("index:" + index + " contains Link. Skipping:" + type);
       return false;
     }
-    buildText(block, entityEl, width, entityEl.height, elementType);
+    buildText(block, entityEl, width, entityEl.height, elementType, 20);
+  } else if (type == "content-item") {
+    buildText(block, entityEl, width, entityEl.height, elementType, 40);
+
+    addTextColumn(
+      entityEl,
+      width / 3,
+      entityEl.height,
+      0.75,
+      "date",
+      "Sept 09, 2024",
+      15
+    );
   } else if (type == "asset") {
     buildAsset(block, entityEl, width, entityEl.height, elementType);
   } else {

@@ -1,4 +1,12 @@
 
+WORKING on improving asset resizing.
+But see that when I drag image onto page.
+THen that image has fuckedup aspect ratio.
+Something with reusing the same texture.
+
+See aframe-fit-image.js
+
+
 2023-04-16
 Asset sizing.
 GGood resource: https://github.com/nylki/aframe-fit-texture-component/

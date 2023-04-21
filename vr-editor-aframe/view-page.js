@@ -102,6 +102,14 @@ var content_tree = {
     },
 
     {
+      name: "image-test-1",
+      type: "asset",
+      width: "100%",
+      text: "I am ASSET!",
+      image: "images/tours-test/" + "tall-centered-image.jpg",
+    },
+
+    {
       name: "main-2",
       type: "area",
       width: "100%",
