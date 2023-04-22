@@ -1,10 +1,8 @@
-let ASSET_Y = 0;
-let ASSET_X = -0.8; //-0.5;
-let ASSET_Z = -1.9;
+let APP_POSITION_ASSETS = { x: -0.8, y: 0, z: -1.9 };
 
-let ASSET_WIDTH = 0.2;
-let ASSET_HEIGHT = 0.2;
-let ASSET_PANEL_WIDTH = 0.6;
+let ITEM_WIDTH_ASSETS = 0.2;
+let ITEM_HEIGHT_ASSETS = 0.2;
+let PANEL_WIDTH_ASSETS = 0.6;
 
 //Assumption about aall imported images.
 const IMAGE_ASPECT_RATIO = 4 / 3;
@@ -14,8 +12,9 @@ let assetsHolder;
 AFRAME.registerComponent("view-assets", {
   init: async function () {
     var sceneEl = document.querySelector("a-scene");
-    assetsHolder = createAssetsHolder(sceneEl);
-    renderViewAssets();
+    assetsHolder = createHolder_Assets(sceneEl);
+    prepare_Assets();
+    renderView_Assets();
   },
 
   remove: function () {
@@ -27,13 +26,13 @@ AFRAME.registerComponent("view-assets", {
   },
 });
 
-function createAssetsHolder(parentEl) {
+function createHolder_Assets(parentEl) {
   var el = document.createElement("a-entity");
   // var w = width - 0.03;
-  setGeoPlane(el, ASSET_WIDTH, 2);
+  setGeoPlane(el, ITEM_WIDTH_ASSETS, 2);
 
   // let y = 1;
-  el.setAttribute("position", { x: ASSET_X, y: ASSET_Y, z: ASSET_Z });
+  el.setAttribute("position", APP_POSITION_ASSETS);
   el.setAttribute("rotation", { x: 0, y: 0, z: 0 });
 
   el.setAttribute("material", {
@@ -48,8 +47,8 @@ function createAssetsHolder(parentEl) {
   return el;
 }
 
-function renderViewAssets() {
-  console.log("renderViewAssets()");
+function renderView_Assets() {
+  console.log("renderView_Assets()");
 
   let parentBlock = assetsHolder;
   let x = 0; /// + ASSET_PANEL_WIDTH / 2;
@@ -64,9 +63,11 @@ function renderViewAssets() {
     x,
     y,
     z,
-    ASSET_WIDTH,
     orientation,
-    ELEMENT_TYPE_MENU
+    ELEMENT_TYPE_MENU,
+    ITEM_WIDTH_ASSETS,
+    ITEM_HEIGHT_ASSETS,
+    PANEL_WIDTH_ASSETS
   );
 }
 
@@ -76,24 +77,23 @@ function renderContentGrid(
   x,
   y,
   z,
-  width_to_share,
   orientation,
-  elementType
+  elementType,
+  item_width,
+  item_height,
+  panel_width
 ) {
   content.forEach((c) => {
     //Width: Change percents to pixels.
-    let width = ASSET_WIDTH;
-    let height = ASSET_HEIGHT;
-
     //DOES BLOCK EXIST?
 
     let newBlock = renderBlock(
       c,
-      x - width * 0.5,
+      x - item_width * 0.5,
       y,
       z,
-      width,
-      height,
+      item_width,
+      item_height,
       orientation,
       content,
       parentBlock,
@@ -101,10 +101,10 @@ function renderContentGrid(
     );
 
     if (newBlock) {
-      x += width + MARGIN;
+      x += item_width + MARGIN;
 
-      if (x > ASSET_PANEL_WIDTH) {
-        y -= height + MARGIN;
+      if (x > panel_width) {
+        y -= item_height + MARGIN;
         x = 0;
       }
       //   console.log("x: ", x, " y: ", y);
@@ -144,15 +144,18 @@ var tour_images = [
 
 const MAX_ASSETS = 20; //20
 var assets_content = [];
-for (i = 0; i < MAX_ASSETS; i++) {
-  let node = {
-    name: "Asset-m" + i,
-    type: "asset",
-    width: "100%",
-    text: "Asset " + i,
-    image: "images/tours-test/" + tour_images[i % tour_images.length],
-  };
-  assets_content.push(node);
+
+function prepare_Assets() {
+  for (i = 0; i < MAX_ASSETS; i++) {
+    let node = {
+      name: "Asset-m" + i,
+      type: "asset",
+      width: "100%",
+      text: "Asset " + i,
+      image: "images/tours-test/" + tour_images[i % tour_images.length],
+    };
+    assets_content.push(node);
+  }
 }
 
 var assets_content_sample = [

@@ -10,8 +10,8 @@ AFRAME.registerComponent("view-tours", {
   init: async function () {
     var sceneEl = document.querySelector("a-scene");
     holder_Tours = createHolder_Tours(sceneEl);
-    await fetchTours();
-    prepareTours();
+    await fetch_Tours();
+    prepare_Tours();
     renderView_Tours();
   },
 
@@ -26,7 +26,7 @@ AFRAME.registerComponent("view-tours", {
 
 let tours;
 let tours_url = "https://demopublic.magnolia-cms.com/.rest/delivery/tours/v1/";
-async function fetchTours() {
+async function fetch_Tours() {
   const response = await fetch(tours_url);
   let json = await response.json();
   tours = json.results;
@@ -70,7 +70,6 @@ function renderView_Tours() {
     x,
     y,
     z,
-    ITEM_WIDTH_TOURS,
     orientation,
     ELEMENT_TYPE_MENU,
     ITEM_WIDTH_TOURS,
@@ -85,7 +84,6 @@ function renderContent_List(
   x,
   y,
   z,
-  width_to_share,
   orientation,
   elementType,
   item_width,
@@ -94,25 +92,23 @@ function renderContent_List(
 ) {
   content.forEach((c) => {
     //Width: Change percents to pixels.
-    let width = item_width;
-    let height = item_height;
 
     //DOES BLOCK EXIST?
 
     let newBlock = renderBlock(
       c,
-      x - width * 0.5,
+      x - item_width * 0.5,
       y,
       z,
-      width,
-      height,
+      item_width,
+      item_height,
       orientation,
       content,
       parentBlock,
       elementType
     );
 
-    y -= height + MARGIN;
+    y -= item_height + MARGIN;
     x = 0;
   }); //loop content array.
 }
@@ -122,7 +118,7 @@ function renderContent_List(
 const MAX_TOURS = 20; //20
 var tours_content = [];
 
-function prepareTours() {
+function prepare_Tours() {
   for (i = 0; i < MAX_TOURS; i++) {
     let node = {
       name: "Tour-m" + i,

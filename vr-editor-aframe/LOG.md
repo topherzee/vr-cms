@@ -6,6 +6,13 @@ Something with reusing the same texture.
 
 See aframe-fit-image.js
 
+2023-04-17
+
+Render images at proper aspect ratio. (How?)
+Next step would be to actually detect image ratio instead of hardcoding 4:3.
+
+Add a tours app. (List view)
+
 
 2023-04-16
 Asset sizing.
