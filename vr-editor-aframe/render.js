@@ -34,7 +34,15 @@ function addDropTarget(parentEl, width) {
   parentEl.appendChild(targetEl);
 }
 
-function buildText(block, entityEl, width, height, elementType, wrapCount) {
+function buildText(
+  block,
+  entityEl,
+  width,
+  height,
+  xPos,
+  elementType,
+  wrapCount
+) {
   //Base component must be a box otherwise the OUTLINE will not function properly.
   entityEl.setAttribute("geometry", {
     primitive: "box",
@@ -84,7 +92,7 @@ function buildText(block, entityEl, width, height, elementType, wrapCount) {
     width: width,
     height: height,
   });
-  textEl.setAttribute("position", { x: 0, y: 0, z: THICKNESS / 2 + 0.01 });
+  textEl.setAttribute("position", { x: xPos, y: 0, z: THICKNESS / 2 + 0.01 });
   entityEl.appendChild(textEl);
 
   textEl.setAttribute("material", {
@@ -134,7 +142,7 @@ function addTextColumn(
     textEl = document.createElement("a-entity");
   }
 
-  textEl.classList.add(`.text-${columnName}`);
+  textEl.classList.add(`text-${columnName}`);
 
   textEl.setAttribute("position", {
     x: 0 + ratio * width * 2,
@@ -161,6 +169,42 @@ function addTextColumn(
   );
 
   entityEl.appendChild(textEl);
+}
+
+function addIcon(entityEl, width, height, xPos, url) {
+  var imageEl;
+
+  //if we already have a text - dont make another one. //But changge text if need be.
+  if (entityEl.querySelector(`.icon`)) {
+    imageEl = entityEl.querySelector(`.icon`);
+    //textEl.setAttribute("text", "value: " + text);
+    return;
+  } else {
+    imageEl = document.createElement("a-entity");
+  }
+  imageEl.classList.add(`icon`);
+
+  // console.log("WWW:", entityEl.getAttribute("geometry").width);
+  imageEl.setAttribute("position", {
+    x: xPos,
+    y: 0,
+    z: THICKNESS / 2 + 0.01,
+  });
+
+  imageEl.setAttribute("material", {
+    color: "#fff",
+    side: "double",
+    shader: "flat",
+    src: `url(${url})`,
+  });
+
+  imageEl.setAttribute("geometry", {
+    primitive: "plane",
+    width: width,
+    height: height,
+  });
+
+  entityEl.appendChild(imageEl);
 }
 
 //Method is ugly - but it works!
@@ -332,9 +376,17 @@ function renderBlock(
       //console.log("index:" + index + " contains Link. Skipping:" + type);
       return false;
     }
-    buildText(block, entityEl, width, entityEl.height, elementType, 20);
+    buildText(block, entityEl, width, entityEl.height, 0, elementType, 20);
   } else if (type == "content-item") {
-    buildText(block, entityEl, width, entityEl.height, elementType, 40);
+    buildText(
+      block,
+      entityEl,
+      width,
+      entityEl.height,
+      entityEl.height,
+      elementType,
+      40
+    );
 
     addTextColumn(
       entityEl,
@@ -344,6 +396,13 @@ function renderBlock(
       "date",
       "Sept 09, 2024",
       15
+    );
+    addIcon(
+      entityEl,
+      entityEl.height,
+      entityEl.height,
+      -(width / 2) + entityEl.height / 2,
+      `images/icon-content-item.png`
     );
   } else if (type == "asset") {
     buildAsset(block, entityEl, width, entityEl.height, elementType);

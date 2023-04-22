@@ -9,7 +9,13 @@ let holder_Tours;
 AFRAME.registerComponent("view-tours", {
   init: async function () {
     var sceneEl = document.querySelector("a-scene");
-    holder_Tours = createHolder_Tours(sceneEl);
+    holder_Tours = createHolder_App(
+      sceneEl,
+      "tours",
+      APP_POSITION_TOURS,
+      PANEL_WIDTH_TOURS,
+      APP_HEIGHT
+    );
     await fetch_Tours();
     prepare_Tours();
     renderView_Tours();
@@ -24,6 +30,16 @@ AFRAME.registerComponent("view-tours", {
   },
 });
 
+function renderView_Tours() {
+  renderView_App(
+    holder_Tours,
+    tours_content,
+    ITEM_WIDTH_TOURS,
+    ITEM_HEIGHT_TOURS,
+    PANEL_WIDTH_TOURS
+  );
+}
+
 let tours;
 let tours_url = "https://demopublic.magnolia-cms.com/.rest/delivery/tours/v1/";
 async function fetch_Tours() {
@@ -31,86 +47,6 @@ async function fetch_Tours() {
   let json = await response.json();
   tours = json.results;
   console.log("TOURS:", tours);
-}
-
-function createHolder_Tours(parentEl) {
-  var el = document.createElement("a-entity");
-  // var w = width - 0.03;
-  setGeoPlane(el, PANEL_WIDTH_TOURS, 2);
-
-  // let y = 1;
-  el.setAttribute("position", APP_POSITION_TOURS);
-  el.setAttribute("rotation", { x: 0, y: 0, z: 0 });
-
-  el.setAttribute("material", {
-    color: "#999",
-    side: "double",
-    shader: "flat",
-  });
-
-  el.setAttribute("id", "holder_tours");
-
-  parentEl.appendChild(el);
-  return el;
-}
-
-function renderView_Tours() {
-  console.log("renderView_Tours()");
-
-  let parentBlock = holder_Tours;
-  let x = 0; /// + ASSET_PANEL_WIDTH / 2;
-  let y = DEFAULT_HEIGHT + DEFAULT_HEIGHT / 2;
-  let z = 0.11;
-  //let width_to_share = 1.0;
-  let orientation = "";
-
-  renderContent_List(
-    parentBlock,
-    tours_content,
-    x,
-    y,
-    z,
-    orientation,
-    ELEMENT_TYPE_MENU,
-    ITEM_WIDTH_TOURS,
-    ITEM_HEIGHT_TOURS,
-    PANEL_WIDTH_TOURS
-  );
-}
-
-function renderContent_List(
-  parentBlock,
-  content,
-  x,
-  y,
-  z,
-  orientation,
-  elementType,
-  item_width,
-  item_height,
-  panel_width
-) {
-  content.forEach((c) => {
-    //Width: Change percents to pixels.
-
-    //DOES BLOCK EXIST?
-
-    let newBlock = renderBlock(
-      c,
-      x - item_width * 0.5,
-      y,
-      z,
-      item_width,
-      item_height,
-      orientation,
-      content,
-      parentBlock,
-      elementType
-    );
-
-    y -= item_height + MARGIN;
-    x = 0;
-  }); //loop content array.
 }
 
 //"flickr_iran_ninara_by20_13974556578_ee8d3923c0_k.jpeg",
