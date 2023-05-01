@@ -1,9 +1,9 @@
 let ITEM_WIDTH_ASSETS = 0.1;
 let ITEM_HEIGHT_ASSETS = 0.1;
-let PANEL_WIDTH_ASSETS = 0.5;
+let PANEL_WIDTH_ASSETS = 0.4;
 
 let APP_POSITION_ASSETS = {
-  x: -SCREEN_WIDTH / 2 - PANEL_WIDTH_ASSETS / 2 - MARGIN * 3,
+  x: -SCREEN_WIDTH / 2 - PANEL_WIDTH_ASSETS / 2 - MENU_WIDTH - MARGIN * 6,
   y: SCREEN_Y - APP_HEIGHT / 2,
   z: SCREEN_Z,
 };
@@ -26,10 +26,11 @@ AFRAME.registerComponent("view-assets", {
     );
 
     var x = -PANEL_WIDTH_ASSETS / 2 + APP_HEADER_WIDTH / 2;
+    var y = APP_HEIGHT / 2 - APP_HEADER_HEIGHT / 2;
     renderHeader_App(
       holder_Assets,
       "Assets",
-      { x: x, y: APP_HEIGHT / 2, z: THICKNESS + 0.01 },
+      { x: x, y: y, z: THICKNESS + 0.01 },
       APP_HEADER_WIDTH,
       APP_HEADER_HEIGHT
     );

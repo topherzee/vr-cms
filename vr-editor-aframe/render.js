@@ -1,16 +1,16 @@
 let SCREEN_Y = 1.4;
 let SCREEN_Z = -0.7;
-let SCREEN_WIDTH = 0.7;
+let SCREEN_WIDTH = 0.5;
 
 let DEFAULT_HEIGHT = 0.2;
 let APP_HEIGHT = 1.0;
 
 let APP_HEADER_HEIGHT = 0.05;
-let APP_HEADER_WIDTH = 0.2;
+let APP_HEADER_WIDTH = 0.1;
 
 let THICKNESS = 0.001;
 
-var MARGIN = 0.01;
+var MARGIN = 0.005;
 
 let DROP_WIDTH = 0.05; //meters
 

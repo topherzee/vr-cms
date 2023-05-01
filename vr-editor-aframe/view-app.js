@@ -24,7 +24,7 @@ function renderView_App(holder, content, width, height, panel_width) {
 
   let parentBlock = holder;
   let x = 0;
-  let y = APP_HEIGHT / 2 - height;
+  let y = APP_HEIGHT / 2 - APP_HEADER_HEIGHT - height / 2;
   let z = 0.01;
   //let width_to_share = 1.0;
   let orientation = "";

@@ -1,6 +1,6 @@
-let ITEM_WIDTH_TOURS = 0.8;
-let ITEM_HEIGHT_TOURS = 0.05;
-let PANEL_WIDTH_TOURS = 0.8;
+let ITEM_WIDTH_TOURS = 0.4;
+let ITEM_HEIGHT_TOURS = 0.025;
+let PANEL_WIDTH_TOURS = 0.4;
 
 let APP_POSITION_TOURS = {
   x: SCREEN_WIDTH / 2 + PANEL_WIDTH_TOURS / 2 + MARGIN * 3,
@@ -23,10 +23,11 @@ AFRAME.registerComponent("view-tours", {
     );
 
     var x = -PANEL_WIDTH_TOURS / 2 + APP_HEADER_WIDTH / 2;
+    var y = APP_HEIGHT / 2 - APP_HEADER_HEIGHT / 2;
     renderHeader_App(
       holder_Tours,
       "Tours",
-      { x: x, y: APP_HEIGHT / 2, z: THICKNESS + 0.01 },
+      { x: x, y: y, z: THICKNESS + 0.01 },
       APP_HEADER_WIDTH,
       APP_HEADER_HEIGHT
     );

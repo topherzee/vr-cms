@@ -1,10 +1,10 @@
-let PAGE_RATIO = 3 / 4;
-let PAGE_WIDTH = SCREEN_WIDTH * PAGE_RATIO;
+// let PAGE_RATIO = 3 / 4;
+let PAGE_WIDTH = SCREEN_WIDTH; // * PAGE_RATIO;
 
 let PAGE_BLOCK_HEIGHT = 0.2;
 
 let PAGE_Y = SCREEN_Y;
-let PAGE_X = (SCREEN_WIDTH - PAGE_WIDTH) / 2;
+let PAGE_X = 0;
 let PAGE_Z = SCREEN_Z;
 
 let pageHolder;

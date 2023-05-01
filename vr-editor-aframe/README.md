@@ -11,6 +11,11 @@ Go to chrome://inspect#devices
 ----
 TODO:
 
+Item in hand should not go behind the apps.
+When tentative - give sppecial color (blue outline?)
+When tentative - hide the item.
+Make everything smaller.
+
 Clean up code. Encapsulate. Clear API.
 
 Add realistic dummy componenets. (Travel demo?)
