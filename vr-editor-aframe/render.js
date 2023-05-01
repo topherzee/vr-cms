@@ -1,10 +1,19 @@
-let DROP_WIDTH = 0.08; //meters
+let SCREEN_Y = 1.4;
+let SCREEN_Z = -0.7;
+let SCREEN_WIDTH = 0.7;
 
-let DEFAULT_HEIGHT = 0.5;
+let DEFAULT_HEIGHT = 0.2;
+let APP_HEIGHT = 1.0;
 
-let THICKNESS = 0.1;
+let APP_HEADER_HEIGHT = 0.05;
+let APP_HEADER_WIDTH = 0.2;
+
+let THICKNESS = 0.001;
 
 var MARGIN = 0.01;
+
+let DROP_WIDTH = 0.05; //meters
+
 var index = 0;
 
 let ELEMENT_TYPE_BLOCK = "ELEMENT_TYPE_BLOCK";
@@ -19,14 +28,26 @@ function addDropTarget(parentEl, width) {
   setGeoPlane(targetEl, w, DROP_WIDTH);
 
   let y = parentEl.height / 2 - DROP_WIDTH / 2;
-  targetEl.setAttribute("position", { x: 0, y: -y, z: THICKNESS + 0.015 });
+  targetEl.setAttribute("position", { x: 0, y: -y, z: THICKNESS + 0.025 });
   targetEl.setAttribute("rotation", { x: 0, y: 0, z: 0 });
 
   targetEl.setAttribute("material", {
     color: DROP_TARGET_OFF_COLOR,
     side: "double",
-    shader: "flat",
+    // shader: "flat",
+    transparent: true,
+    opactiy: 0.5,
   });
+
+  // targetEl.getObjectmaterial = new THREE.MeshBasicMaterial({
+  //   color: DROP_TARGET_OFF_COLOR,
+  //   side: "double",
+  //   transparent: true,
+  //   opactiy: 0.5,
+  // });
+  targetEl.setAttribute("material", "opacity", 0.5);
+
+  // this.material.opacity.set(0.1);
 
   targetEl.setAttribute("id", parentEl.id + "_droptarget");
   targetEl.classList.add("droptarget");
@@ -92,7 +113,11 @@ function buildText(
     width: width,
     height: height,
   });
-  textEl.setAttribute("position", { x: xPos, y: 0, z: THICKNESS / 2 + 0.01 });
+  textEl.setAttribute("position", {
+    x: xPos,
+    y: 0,
+    z: THICKNESS / 2 + 0.01,
+  });
   entityEl.appendChild(textEl);
 
   textEl.setAttribute("material", {
@@ -100,13 +125,6 @@ function buildText(
     side: "double",
     shader: "flat",
   });
-  //console.log(" text:" + text);
-
-  // console.log("TEXT: ", entityEl.components.text);
-  // if (entityEl.components.text) {
-  //   console.log("TEXT: REMOVE");
-  //   // return; //need this - otherwise get errors about removing text object3d.
-  // }
 
   if (isHeader) {
     textEl.setAttribute(
@@ -229,15 +247,15 @@ function buildAsset(block, entityEl, width, height, elementType) {
   // var url = "images/tours-test/" + tour_images[0];
   var imageEl;
   //if we already have a image - dont make another one. //But changge text if need be.
-  // if (entityEl.querySelector(".asset-image")) {
-  //   imageEl = entityEl.querySelector(".asset-image");
-  //   return;
-  // } else {
-  //   imageEl = document.createElement("a-entity");
-  // }
-  // imageEl.classList.add("asset-image");
+  if (entityEl.querySelector(".asset-image")) {
+    imageEl = entityEl.querySelector(".asset-image");
+    return;
+  } else {
+    imageEl = document.createElement("a-entity");
+  }
+  imageEl.classList.add("asset-image");
 
-  imageEl = document.createElement("a-entity");
+  // imageEl = document.createElement("a-entity");
 
   imageEl.setAttribute("geometry", {
     primitive: "plane",
@@ -251,6 +269,7 @@ function buildAsset(block, entityEl, width, height, elementType) {
   });
 
   //force geometry to update.
+
   imageEl.setAttribute("fit-image", {
     updater: Date.now(),
   });
@@ -302,7 +321,7 @@ function buildAsset(block, entityEl, width, height, elementType) {
   });
   //console.log(" text:" + text);
 
-  entityEl.height = 0.5;
+  // entityEl.height = 0.5;
 
   textEl.setAttribute(
     "text",
@@ -378,32 +397,24 @@ function renderBlock(
     }
     buildText(block, entityEl, width, entityEl.height, 0, elementType, 20);
   } else if (type == "content-item") {
-    buildText(
-      block,
-      entityEl,
-      width,
-      entityEl.height,
-      entityEl.height,
-      elementType,
-      40
-    );
+    buildText(block, entityEl, width, entityEl.height, 0, elementType, 40);
 
-    addTextColumn(
-      entityEl,
-      width / 3,
-      entityEl.height,
-      0.75,
-      "date",
-      "Sept 09, 2024",
-      15
-    );
-    addIcon(
-      entityEl,
-      entityEl.height,
-      entityEl.height,
-      -(width / 2) + entityEl.height / 2,
-      `images/icon-content-item.png`
-    );
+    // addTextColumn(
+    //   entityEl,
+    //   width / 3,
+    //   entityEl.height,
+    //   0.75,
+    //   "date",
+    //   "Sept 09, 2024",
+    //   15
+    // );
+    // addIcon(
+    //   entityEl,
+    //   entityEl.height,
+    //   entityEl.height,
+    //   -(width / 2) + entityEl.height / 2,
+    //   `images/icon-content-item.png`
+    // );
   } else if (type == "asset") {
     buildAsset(block, entityEl, width, entityEl.height, elementType);
   } else {

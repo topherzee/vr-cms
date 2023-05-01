@@ -1,8 +1,12 @@
-let APP_POSITION_ASSETS = { x: -0.8, y: 0, z: -1.9 };
+let ITEM_WIDTH_ASSETS = 0.1;
+let ITEM_HEIGHT_ASSETS = 0.1;
+let PANEL_WIDTH_ASSETS = 0.5;
 
-let ITEM_WIDTH_ASSETS = 0.2;
-let ITEM_HEIGHT_ASSETS = 0.2;
-let PANEL_WIDTH_ASSETS = 0.6;
+let APP_POSITION_ASSETS = {
+  x: -SCREEN_WIDTH / 2 - PANEL_WIDTH_ASSETS / 2 - MARGIN * 3,
+  y: SCREEN_Y - APP_HEIGHT / 2,
+  z: SCREEN_Z,
+};
 
 //Assumption about aall imported images.
 const IMAGE_ASPECT_RATIO = 4 / 3;
@@ -12,6 +16,7 @@ let holder_Assets;
 AFRAME.registerComponent("view-assets", {
   init: async function () {
     var sceneEl = document.querySelector("a-scene");
+
     holder_Assets = createHolder_App(
       sceneEl,
       "assets",
@@ -19,6 +24,16 @@ AFRAME.registerComponent("view-assets", {
       PANEL_WIDTH_ASSETS,
       APP_HEIGHT
     );
+
+    var x = -PANEL_WIDTH_ASSETS / 2 + APP_HEADER_WIDTH / 2;
+    renderHeader_App(
+      holder_Assets,
+      "Assets",
+      { x: x, y: APP_HEIGHT / 2, z: THICKNESS + 0.01 },
+      APP_HEADER_WIDTH,
+      APP_HEADER_HEIGHT
+    );
+
     prepare_Assets();
     renderView_Assets();
   },

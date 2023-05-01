@@ -105,9 +105,9 @@
          <a-sky color="#111111"></a-sky>
 
          <!-- <a-image src="#my-image" position="0 1.5 -1.9" width="3" height="0.3"  ></a-image> -->
-         <a-image src="images/magnolia-header.jpg" position="0 1.5 -1.9" width="3" height="0.3"  ></a-image>
+         <a-image src="images/magnolia-header.jpg" position="0 1.5 -0.7" width="0.7" height="0.06"  ></a-image>
          
-         <a-image src="images/magnolia-pages-app-header.png" position="0 1.2 -1.9" width="3" height="0.16"  ></a-image>
+         <a-image src="images/magnolia-pages-app-header.png" position="0 1.45 -0.7" width="0.7" height="0.03"  ></a-image>
 
          <!-- <a-entity id="drag_parent" ></a-entity> -->
          <a-entity id="page" page></a-entity>
@@ -118,19 +118,19 @@
          <a-cylinder id="cyl-1" position="0 0.2 -2"  radius="0.2" height="0.5" color="#FFC65D" ></a-cylinder>
          <a-cylinder id="cyl-2" class = "movable 3d-movable" position="0 0 -3"  radius="0.5" height="1.5" color="#FFC65D" ></a-cylinder>
  
-      <a-entity camera look-controls wasd-controls remove-cursor>
-        <a-entity id="cursor" cursor="fuse: true; fuseTimeout: 1000"
+      <a-entity camera look-controls wasd-controls remove-cursor position="0 1.2 .9">
+        <!-- <a-entity id="cursor" cursor="fuse: true; fuseTimeout: 1000"
                   mover
                   position="0 0 -1"
                   rayOrigin: mouse
                   raycaster="objects: .movable, .droptarget; far: 5;"
                   geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
                   material="color: blue; shader: flat">
-        </a-entity>
+        </a-entity> -->
       </a-entity>
       
-      <!-- <a-entity laser-controls="hand: left" raycaster="objects: .movable, .droptarget; far: 5;" mover></a-entity>
-      <a-entity laser-controls="hand: right"  raycaster="objects: .movable, .droptarget; far: 5;" mover></a-entity> -->
+      <a-entity laser-controls="hand: left" raycaster="objects: .movable, .droptarget; far: 5;" mover></a-entity>
+      <a-entity laser-controls="hand: right"  raycaster="objects: .movable, .droptarget; far: 5;" mover></a-entity>
 
      
     </a-scene>

@@ -11,19 +11,12 @@ Go to chrome://inspect#devices
 ----
 TODO:
 
-Scale things to the correct size. 
-
-Move assets and tours to the side as "mini-apps"
-
-Add reaistic dummy componenets. (Travel demo?)
-
-Add an App header to the top of the two apps.
-
 Clean up code. Encapsulate. Clear API.
 
-Drag and Drop Page and Component Menu?
+Add realistic dummy componenets. (Travel demo?)
+Drag and Drop Page and Component Menu & Apps?
 Ability to place things in 3d instead of only "in the grid."
-Animate item snaapping baack into place if not used.
+Animate item snapping back into place if not used.
 
 
 ----

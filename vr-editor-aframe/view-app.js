@@ -1,5 +1,3 @@
-let APP_HEIGHT = 2;
-
 function createHolder_App(parentEl, appName, appPosition, appWidth, appHeight) {
   var el = document.createElement("a-entity");
   // var w = width - 0.03;
@@ -25,9 +23,9 @@ function renderView_App(holder, content, width, height, panel_width) {
   console.log("renderView_App()");
 
   let parentBlock = holder;
-  let x = 0; /// + ASSET_PANEL_WIDTH / 2;
-  let y = DEFAULT_HEIGHT + DEFAULT_HEIGHT / 2;
-  let z = 0.11;
+  let x = 0;
+  let y = APP_HEIGHT / 2 - height;
+  let z = 0.01;
   //let width_to_share = 1.0;
   let orientation = "";
 
@@ -43,6 +41,38 @@ function renderView_App(holder, content, width, height, panel_width) {
     height,
     panel_width
   );
+}
+
+function renderHeader_App(parentEl, appName, pos, width, height) {
+  var textEl = document.createElement("a-entity");
+
+  textEl.classList.add(`header-${appName}`);
+
+  // textEl.setAttribute("position", position);
+  textEl.setAttribute("position", {
+    x: pos.x,
+    y: pos.y,
+    z: pos.z,
+  });
+
+  textEl.setAttribute("material", {
+    color: "#fff",
+    side: "double",
+    shader: "flat",
+  });
+
+  textEl.setAttribute("geometry", {
+    primitive: "plane",
+    width: width,
+    height: height,
+  });
+
+  textEl.setAttribute(
+    "text",
+    `side: front; color: black; align: left; wrap-count: 15; value:${appName}`
+  );
+
+  parentEl.appendChild(textEl);
 }
 
 function renderContentGrid(
@@ -63,11 +93,11 @@ function renderContentGrid(
 
     let newBlock = renderBlock(
       c,
-      x - item_width * 0.5,
+      x - panel_width / 2 + item_width / 2,
       y,
       z,
-      item_width,
-      item_height,
+      item_width - MARGIN,
+      item_height - MARGIN,
       orientation,
       content,
       parentBlock,
@@ -75,10 +105,10 @@ function renderContentGrid(
     );
 
     if (newBlock) {
-      x += item_width + MARGIN;
+      x += item_width; // + MARGIN;
 
-      if (x > panel_width) {
-        y -= item_height + MARGIN;
+      if (x >= panel_width) {
+        y -= item_height; // + MARGIN;
         x = 0;
       }
       //   console.log("x: ", x, " y: ", y);

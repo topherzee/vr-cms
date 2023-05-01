@@ -1,15 +1,36 @@
-let MENU_Y = 0;
-let MENU_X = 0; //-0.5;
-let MENU_Z = -1.9;
+let MENU_WIDTH = SCREEN_WIDTH * (1 - PAGE_RATIO);
 
-let MENU_WIDTH = 0.5;
+// let MENU_Y = SCREEN_Y;
+// let MENU_X = ;
+// let MENU_Z = SCREEN_Z;
+
+let APP_POSITION_MENU = {
+  x: -SCREEN_WIDTH / 2 + MENU_WIDTH / 2,
+  y: SCREEN_Y - APP_HEIGHT / 2,
+  z: SCREEN_Z,
+};
 
 let menuHolder;
 
 AFRAME.registerComponent("menu", {
   init: function () {
     var sceneEl = document.querySelector("a-scene");
-    menuHolder = createMenuHolder(sceneEl);
+
+    menuHolder = createHolder_App(
+      sceneEl,
+      "components",
+      APP_POSITION_MENU,
+      MENU_WIDTH,
+      APP_HEIGHT
+    );
+
+    renderHeader_App(
+      menuHolder,
+      "Components",
+      { x: 0, y: APP_HEIGHT / 2, z: THICKNESS + 0.01 },
+      MENU_WIDTH,
+      APP_HEADER_HEIGHT
+    );
 
     renderMenu();
   },
@@ -44,34 +65,13 @@ var component_menu = [
   },
 ];
 
-function createMenuHolder(parentEl) {
-  var el = document.createElement("a-entity");
-  // var w = width - 0.03;
-  setGeoPlane(el, MENU_WIDTH, 2);
-
-  // let y = 1;
-  el.setAttribute("position", { x: MENU_X, y: MENU_Y, z: MENU_Z });
-  el.setAttribute("rotation", { x: 0, y: 0, z: 0 });
-
-  el.setAttribute("material", {
-    color: "#999",
-    side: "double",
-    shader: "flat",
-  });
-
-  el.setAttribute("id", "menuHolder");
-
-  parentEl.appendChild(el);
-  return el;
-}
-
 function renderMenu() {
   console.log("renderMenu()");
 
   let parentBlock = menuHolder;
-  let x = 0 + MENU_WIDTH / 2;
+  let x = MENU_WIDTH / 2;
   let y = DEFAULT_HEIGHT + DEFAULT_HEIGHT / 2;
-  let z = 0.11;
+  let z = 0.0;
   //let width_to_share = 1.0;
   let orientation = "";
 

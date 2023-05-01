@@ -1,5 +1,15 @@
 
-WORKING on improving asset resizing.
+2023-05-01
+
+Fixed aspect ratio. 
+Fixed asset-related performance problem.
+Fixed layout of Assets.
+Move assets and tours to the side as "mini-apps"
+Add an App header to the top of the two apps.
+
+----
+
+WORKINGG on improving asset resizing.
 But see that when I drag image onto page.
 THen that image has fuckedup aspect ratio.
 Something with reusing the same texture.

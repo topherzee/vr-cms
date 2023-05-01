@@ -1,14 +1,19 @@
-let APP_POSITION_TOURS = { x: 1.7, y: 0, z: -1.9 };
-
 let ITEM_WIDTH_TOURS = 0.8;
 let ITEM_HEIGHT_TOURS = 0.05;
 let PANEL_WIDTH_TOURS = 0.8;
+
+let APP_POSITION_TOURS = {
+  x: SCREEN_WIDTH / 2 + PANEL_WIDTH_TOURS / 2 + MARGIN * 3,
+  y: SCREEN_Y - APP_HEIGHT / 2,
+  z: SCREEN_Z,
+};
 
 let holder_Tours;
 
 AFRAME.registerComponent("view-tours", {
   init: async function () {
     var sceneEl = document.querySelector("a-scene");
+
     holder_Tours = createHolder_App(
       sceneEl,
       "tours",
@@ -16,6 +21,16 @@ AFRAME.registerComponent("view-tours", {
       PANEL_WIDTH_TOURS,
       APP_HEIGHT
     );
+
+    var x = -PANEL_WIDTH_TOURS / 2 + APP_HEADER_WIDTH / 2;
+    renderHeader_App(
+      holder_Tours,
+      "Tours",
+      { x: x, y: APP_HEIGHT / 2, z: THICKNESS + 0.01 },
+      APP_HEADER_WIDTH,
+      APP_HEADER_HEIGHT
+    );
+
     await fetch_Tours();
     prepare_Tours();
     renderView_Tours();

@@ -1,9 +1,11 @@
-let PAGE_Y = 0;
-let PAGE_X = 1;
-let PAGE_Z = -2;
-let PAGE_WIDTH = 1;
+let PAGE_RATIO = 3 / 4;
+let PAGE_WIDTH = SCREEN_WIDTH * PAGE_RATIO;
 
-var WIDTH_PAGE = "1";
+let PAGE_BLOCK_HEIGHT = 0.2;
+
+let PAGE_Y = SCREEN_Y;
+let PAGE_X = (SCREEN_WIDTH - PAGE_WIDTH) / 2;
+let PAGE_Z = SCREEN_Z;
 
 let pageHolder;
 
@@ -11,17 +13,41 @@ let pageHolder;
 //   pageHolder.innerHTML = ""; //remove all child elements.
 // }
 
+AFRAME.registerComponent("page", {
+  init: function () {
+    //this.originalRotation = this.el.object3D.rotation.y;
+
+    var sceneEl = document.querySelector("a-scene");
+
+    pageHolder = createPageHolder(sceneEl);
+
+    renderPage();
+  },
+
+  remove: function () {
+    this.el.object3D.rotation.y = this.originalRotation;
+  },
+
+  tick: function () {
+    //this.el.object3D.rotation.y += 0.001;
+  },
+});
+
 function createPageHolder(parentEl) {
   var el = document.createElement("a-entity");
   // var w = width - 0.03;
-  setGeoPlane(el, PAGE_WIDTH, 2);
+  setGeoPlane(el, PAGE_WIDTH, APP_HEIGHT);
 
   // let y = 1;
-  el.setAttribute("position", { x: PAGE_X, y: PAGE_Y, z: PAGE_Z });
+  el.setAttribute("position", {
+    x: PAGE_X,
+    y: PAGE_Y - APP_HEIGHT / 2,
+    z: PAGE_Z,
+  });
   el.setAttribute("rotation", { x: 0, y: 0, z: 0 });
 
   el.setAttribute("material", {
-    color: "#333",
+    color: "#f33",
     side: "double",
     shader: "flat",
   });
@@ -35,13 +61,13 @@ function createPageHolder(parentEl) {
 function renderPage() {
   console.log("renderPage()");
 
-  let width_to_share = 1.0;
+  let width_to_share = PAGE_WIDTH;
   let orientation = "";
 
   let parentBlock = pageHolder;
-  let x = 0 + width_to_share / 2;
-  let y = 0 + DEFAULT_HEIGHT + DEFAULT_HEIGHT / 2;
-  let z = 0.1;
+  let x = 0 + PAGE_WIDTH / 2; // + width_to_share / 2;
+  let y = 0 + APP_HEIGHT / 2 - DEFAULT_HEIGHT / 2;
+  let z = 0;
 
   renderContent(
     parentBlock,
@@ -54,27 +80,6 @@ function renderPage() {
     ELEMENT_TYPE_BLOCK
   );
 }
-
-AFRAME.registerComponent("page", {
-  init: function () {
-    //this.originalRotation = this.el.object3D.rotation.y;
-
-    var sceneEl = document.querySelector("a-scene");
-
-    pageHolder = createPageHolder(sceneEl);
-
-    // renderPage();
-    renderPage();
-  },
-
-  remove: function () {
-    this.el.object3D.rotation.y = this.originalRotation;
-  },
-
-  tick: function () {
-    //this.el.object3D.rotation.y += 0.001;
-  },
-});
 
 var test_obj = {
   tentative: true,
@@ -131,18 +136,18 @@ var content_tree = {
       ],
     },
 
-    {
-      name: "section-1",
-      type: "banner",
-      width: "100%",
-      text: "Section 1",
-    },
-    {
-      name: "section-2",
-      type: "banner",
-      width: "50%",
-      text: "Offers 2",
-    },
+    // {
+    //   name: "section-1",
+    //   type: "banner",
+    //   width: "100%",
+    //   text: "Section 1",
+    // },
+    // {
+    //   name: "section-2",
+    //   type: "banner",
+    //   width: "50%",
+    //   text: "Offers 2",
+    // },
 
     // {
     //   name: "main-3",
@@ -171,12 +176,14 @@ var content_tree = {
     //     },
     //   ],
     // },
+
     {
       name: "footer-10",
       type: "banner",
       width: "100%",
       text: "Foot.",
     },
+
     // ],
     // },
   ],
