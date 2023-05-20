@@ -74,14 +74,14 @@ AFRAME.registerComponent("throwable", {
         this.velocity.multiplyScalar(SPEED_SCALE);
       }
 
-      //test
-      let c = document.getElementById("cyl-1");
-      if (distance > 0) {
-        // console.log("MOVE:" + distance.toFixed(5));
-        c.setAttribute("material", "color", "green");
-      } else {
-        c.setAttribute("material", "color", "red");
-      }
+      //test Depends on an object caalled cyl-1
+      // let c = document.getElementById("cyl-1");
+      // if (distance > 0) {
+      //   // console.log("MOVE:" + distance.toFixed(5));
+      //   c.setAttribute("material", "color", "green");
+      // } else {
+      //   c.setAttribute("material", "color", "red");
+      // }
     }
   },
 });

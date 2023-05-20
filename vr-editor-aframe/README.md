@@ -14,14 +14,26 @@ TODO:
 Item in hand should not go behind the apps.
 When tentative - give sppecial color (blue outline?)
 When tentative - hide the item.
-Make everything smaller.
 
 Clean up code. Encapsulate. Clear API.
 
 Add realistic dummy componenets. (Travel demo?)
-Drag and Drop Page and Component Menu & Apps?
+
 Ability to place things in 3d instead of only "in the grid."
 Animate item snapping back into place if not used.
+
+Preview in devices - Laptop, Big screen, tablet, phone
+
+Position apps where you want them in 3d space.
+
+Would be cool to occlude content, so a page could be in a "browser".
+Tips: 
+https://stackoverflow.com/questions/56192021/how-to-declare-a-mask-material-using-a-frame-js
+A good exaample of simple occlusion - could not get the above one to work:
+https://jsfiddle.net/moydg30e/4/
+https://stackoverflow.com/questions/54038635/how-to-mask-out-an-object-behind-another-transparent-object
+
+
 
 
 ----

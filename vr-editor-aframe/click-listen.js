@@ -28,7 +28,18 @@ function getIntersectedItemWithClass(that, className) {
 let POS_LEN = 30;
 
 AFRAME.registerComponent("mover", {
-  tick: function (time, timeDelta) {},
+  tick: function (time, timeDelta) {
+    if (hoverEl) {
+      // console.log("tick: z:", hoverEl.object3D.position.z);
+      var world = new THREE.Vector3();
+      hoverEl.object3D.getWorldPosition(world);
+      //console.log("tick: z:", world.z);
+      if (world.z < 0) {
+        // hoverEl
+        //RRYING TO GET THE ITEM NOT TO GET HIDDEN.
+      }
+    }
+  },
   init: function () {
     let that = this;
     this.setHover = this.setHover.bind(this);
@@ -210,10 +221,10 @@ AFRAME.registerComponent("mover", {
     let is_menu_item =
       hoverEl.getAttribute("elementType") === ELEMENT_TYPE_MENU;
 
-    hoverEl.setAttribute("material", "opacity", 0.1);
+    hoverEl.setAttribute("material", "opacity", 0.3);
     for (var i = 0; i < hoverEl.children.length; i++) {
       let child = hoverEl.children[i];
-      child.setAttribute("material", "opacity", 0.1);
+      child.setAttribute("material", "opacity", 0.3);
       // console.log("child: ", i, child.classList);
     }
     hoverEl.removeAttribute("outline");

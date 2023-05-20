@@ -1,4 +1,15 @@
 
+Objective: Polish for Newbies and Videos:
+* If item goes to negative Z - pop it out. (click-listen.js tick)
+* Nicer Drop Bars: Only show drop bars when hovering on item?
+* Hilighting color?
+* Sample content from Travel website.
+
+* Preview in devices - simple demo.
+
+2023-05-20
+
+
 2023-05-01
 
 Fixed aspect ratio. 
