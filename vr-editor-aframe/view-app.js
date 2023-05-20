@@ -1,3 +1,5 @@
+var COLOR_APP_BACKGROUND = "#111";
+
 function createHolder_App(parentEl, appName, appPosition, appWidth, appHeight) {
   var el = document.createElement("a-entity");
   // var w = width - 0.03;
@@ -8,7 +10,7 @@ function createHolder_App(parentEl, appName, appPosition, appWidth, appHeight) {
   el.setAttribute("rotation", { x: 0, y: 0, z: 0 });
 
   el.setAttribute("material", {
-    color: "#999",
+    color: COLOR_APP_BACKGROUND,
     side: "double",
     shader: "flat",
   });

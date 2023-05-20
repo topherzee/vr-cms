@@ -101,7 +101,7 @@
 
   </head>
   <body>
-    <a-scene id="scene"  >
+    <a-scene id="scene"  log>
       <a-assets>
         <!-- Canvas for rendering secondary camera -->
         <canvas id="cam2"></canvas>
@@ -147,20 +147,24 @@
       </a-entity>
       
       <a-entity camera look-controls wasd-controls remove-cursor position="0 1.2 .9">
-        <a-entity id="cursor" cursor="fuse: true; fuseTimeout: 1000"
+        <a-entity id="hud" position="0 0.16 -0.5" scale="0.3 0.3 0.3" opacity="0.8" align="center">
+          <a-text id="debugConsole" value="..." align="center"></a-text>
+        </a-entity>
+
+        <!-- <a-entity id="cursor" cursor="fuse: true; fuseTimeout: 1000"
                   mover
                   position="0 0 -1"
                   rayOrigin: mouse
                   raycaster="objects: .movable, .droptarget; far: 5;"
                   geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
                   material="color: blue; shader: flat">
-        </a-entity>
+        </a-entity> -->
       </a-entity>
       
-      <!-- <a-entity laser-controls="hand: left" raycaster="objects: .movable, .droptarget; far: 5;" mover></a-entity>
-      <a-entity laser-controls="hand: right"  raycaster="objects: .movable, .droptarget; far: 5;" mover></a-entity>
+      <a-entity laser-controls="hand: left" raycaster="objects: .movable, .droptarget; far: 5; lineColor: black;" mover></a-entity>
+      <a-entity laser-controls="hand: right"  raycaster="objects: .movable, .droptarget; far: 5;  lineColor: black;" mover></a-entity>
 
-      -->
+     
 
      
 

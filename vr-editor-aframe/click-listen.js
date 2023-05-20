@@ -29,14 +29,21 @@ let POS_LEN = 30;
 
 AFRAME.registerComponent("mover", {
   tick: function (time, timeDelta) {
+    // Prevent the dragged item getting hidden behind the UI.
     if (hoverEl) {
-      // console.log("tick: z:", hoverEl.object3D.position.z);
-      var world = new THREE.Vector3();
-      hoverEl.object3D.getWorldPosition(world);
-      //console.log("tick: z:", world.z);
-      if (world.z < 0) {
-        // hoverEl
-        //RRYING TO GET THE ITEM NOT TO GET HIDDEN.
+      if (is_dragging) {
+        var world = new THREE.Vector3();
+        hoverEl.object3D.getWorldPosition(world);
+        //console.log("tick: z:", world.z);
+        if (world.z < SCREEN_Z + SCREEN_Z_DRAG_BUFFER) {
+          //console.log("tick: less-than z:", world.z);
+          const debugConsole = document.getElementById("debugConsole");
+          debugConsole.setAttribute("value", "Z:" + world.z.toFixed(2));
+          hoverEl.object3D.getWorldPosition(world);
+          console.log("tick: move back to :", world.z);
+          let p = hoverEl.object3D.position;
+          p.divideScalar(1.01);
+        }
       }
     }
   },
@@ -117,10 +124,16 @@ AFRAME.registerComponent("mover", {
 
       let is_thrown = false;
       is_dragging = false;
+      hoverEl.classList.add("movable");
       tentative_id = null;
+
       hoverEl.setAttribute("material", "opacity", 1.0);
       let is_menu_item =
         hoverEl.getAttribute("elementType") === ELEMENT_TYPE_MENU;
+
+      if (hoverDropEl) {
+        hoverDropEl.setAttribute("material", "color", DROP_TARGET_OFF_COLOR);
+      }
 
       //If hovering on drop target - Put the item there.
       if (hoverDropEl) {
@@ -217,6 +230,9 @@ AFRAME.registerComponent("mover", {
     console.log("startDrag() 1", hoverEl.getAttribute("elementType"));
 
     is_dragging = true;
+    //Try to get the laser to go throgh the dragged item
+    //TODO - add it back with done dragging?
+    hoverEl.classList.remove("movable");
 
     let is_menu_item =
       hoverEl.getAttribute("elementType") === ELEMENT_TYPE_MENU;
@@ -225,7 +241,7 @@ AFRAME.registerComponent("mover", {
     for (var i = 0; i < hoverEl.children.length; i++) {
       let child = hoverEl.children[i];
       child.setAttribute("material", "opacity", 0.3);
-      // console.log("child: ", i, child.classList);
+      console.log("child: ", i, child.classList);
     }
     hoverEl.removeAttribute("outline");
 
@@ -388,10 +404,22 @@ function cloneElement(el) {
   return newEl;
 }
 
+//el is the little drop bar.
 function startDropHover(el) {
   console.log("startDropHover: ", el.id);
   el.setAttribute("material", "color", DROP_TARGET_COLOR);
   hoverDropEl = el;
+
+  // el.setAttribute("visible", "true");
+  // el.setAttribute("material", "opacity", 0.5);
+  // hoverEl.setAttribute("visible", "false");
+  //TODO. Does not work for some reason
+  // hoverEl.setAttribute("material", "opacity", 0.0);
+  // for (var i = 0; i < hoverEl.children.length; i++) {
+  //   let child = hoverEl.children[i];
+  //   child.setAttribute("material", "opacity", 0.0);
+  //   // console.log("child: ", i, child.classList);
+  // }
 
   // Put tentatative item in the config
   let t = hoverDropEl;
@@ -424,6 +452,7 @@ function insertBlockAfter(id) {
   console.log(content_tree);
 
   renderPage();
+  // hoverEl.setAttribute("material", "opacity", 0.0);
 }
 
 // let time_last_add = new Date().getTime();
@@ -432,7 +461,11 @@ function insertBlockAfter(id) {
 function stopDropHover() {
   console.log("stopDropHover()");
   hoverDropEl.setAttribute("material", "color", DROP_TARGET_OFF_COLOR);
+  // hoverDropEl.setAttribute("visible", "true");
+  // hoverDropEl.setAttribute("material", "opacity", 0.5);
+
   //hoverDropEl = null;
+  // hoverEl.setAttribute("visible", "true");
 
   //let t = hoverDropEl;
   let id = tentative_id;

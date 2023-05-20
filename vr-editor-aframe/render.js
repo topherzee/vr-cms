@@ -2,6 +2,8 @@ let SCREEN_Y = 1.4;
 let SCREEN_Z = -0.7;
 let SCREEN_WIDTH = 0.5;
 
+let SCREEN_Z_DRAG_BUFFER = 0.05;
+
 let DEFAULT_HEIGHT = 0.2;
 let APP_HEIGHT = 1.0;
 
@@ -51,6 +53,8 @@ function addDropTarget(parentEl, width) {
 
   targetEl.setAttribute("id", parentEl.id + "_droptarget");
   targetEl.classList.add("droptarget");
+
+  targetEl.setAttribute("visble", false);
 
   parentEl.appendChild(targetEl);
 }
@@ -124,6 +128,7 @@ function buildText(
     color: "#fff",
     side: "double",
     shader: "flat",
+    transparent: true,
   });
 
   if (isHeader) {
@@ -371,10 +376,13 @@ function renderBlock(
   index++;
 
   let entityEl = document.getElementById(block.name);
+
   let is_new = false;
   if (!entityEl) {
     is_new = true;
     entityEl = document.createElement("a-entity");
+  } else {
+    entityEl.removeAttribute("outline");
   }
   entityEl.setAttribute("id", block.name);
 
@@ -421,6 +429,10 @@ function renderBlock(
     console.log("index:" + index + "item type not supported:" + type);
     buildGeneric(block, entityEl, width, entityEl.height, elementType);
     //return null;
+  }
+
+  if (block.tentative) {
+    entityEl.setAttribute("outline", "color:" + DRAG_COLOR);
   }
 
   // if (type === "heading") {

@@ -47,7 +47,7 @@ function createPageHolder(parentEl) {
   el.setAttribute("rotation", { x: 0, y: 0, z: 0 });
 
   el.setAttribute("material", {
-    color: "#f33",
+    color: COLOR_APP_BACKGROUND,
     side: "double",
     shader: "flat",
   });
