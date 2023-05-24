@@ -3,7 +3,7 @@ let ITEM_HEIGHT_ASSETS = 0.1;
 let PANEL_WIDTH_ASSETS = 0.4;
 
 let APP_POSITION_ASSETS = {
-  x: -SCREEN_WIDTH / 2 - PANEL_WIDTH_ASSETS / 2 - MENU_WIDTH - MARGIN * 6,
+  x: -SCREEN_WIDTH / 2 - PANEL_WIDTH_ASSETS / 2 - MENU_WIDTH - MARGIN * 20,
   y: SCREEN_Y - APP_HEIGHT / 2,
   z: SCREEN_Z,
 };
@@ -24,6 +24,11 @@ AFRAME.registerComponent("view-assets", {
       PANEL_WIDTH_ASSETS,
       APP_HEIGHT
     );
+
+    if (DO_DEMO) {
+      let assetsEl = document.getElementById("assetsHolder");
+      assetsEl.setAttribute("visible", false);
+    }
 
     var x = -PANEL_WIDTH_ASSETS / 2 + APP_HEADER_WIDTH / 2;
     var y = APP_HEIGHT / 2 - APP_HEADER_HEIGHT / 2;

@@ -26,6 +26,10 @@
       
 <!-- Components and shaders go after A-Frame, but before the scene declaration. -->
 <script>
+  let DEMO_STATE = 0;
+
+  
+  let DO_DEMO = true; //If true click on header to get Assets and Tours. If false, nothing to do.
   
   // Just listen for controllers...$
   // https://aframe.io/docs/1.4.0/components/tracked-controls.html
@@ -114,7 +118,7 @@
          <a-sky color="#111111"></a-sky>
 
          <!-- <a-image src="#my-image" position="0 1.5 -1.9" width="3" height="0.3"  ></a-image> -->
-         <a-image src="images/magnolia-header.jpg" position="0 1.46 -0.7" width="0.5" height="0.045"  ></a-image>
+         <a-image src="images/magnolia-header.jpg" id="top-nav" class="top-nav" position="0 1.46 -0.7" width="0.5" height="0.045"  ></a-image>
          
          <a-image src="images/magnolia-pages-app-header.png" position="0 1.42 -0.7" width="0.5" height="0.02"  ></a-image>
 
@@ -151,18 +155,18 @@
           <a-text id="debugConsole" value="..." align="center"></a-text>
         </a-entity>
 
-        <!-- <a-entity id="cursor" cursor="fuse: true; fuseTimeout: 1000"
+        <a-entity id="cursor" cursor="fuse: true; fuseTimeout: 1000"
                   mover
                   position="0 0 -1"
                   rayOrigin: mouse
-                  raycaster="objects: .movable, .droptarget; far: 5;"
+                  raycaster="objects: .movable, .droptarget, .top-nav; far: 5;"
                   geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
                   material="color: blue; shader: flat">
-        </a-entity> -->
+        </a-entity>
       </a-entity>
       
-      <a-entity laser-controls="hand: left" raycaster="objects: .movable, .droptarget; far: 5; lineColor: black;" mover></a-entity>
-      <a-entity laser-controls="hand: right"  raycaster="objects: .movable, .droptarget; far: 5;  lineColor: black;" mover></a-entity>
+      <!-- <a-entity laser-controls="hand: left" raycaster="objects: .movable, .droptarget; far: 5; lineColor: black;" mover></a-entity>
+      <a-entity laser-controls="hand: right"  raycaster="objects: .movable, .droptarget; far: 5;  lineColor: black;" mover></a-entity> -->
 
      
 

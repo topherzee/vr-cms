@@ -1,14 +1,16 @@
 
 Objective: Polish for Newbies and Videos:
-* If item goes to negative Z - pop it out. (click-listen.js tick)
+
 * Nicer Drop Bars: Only show drop bars when hovering on item?
-* Hilighting color?
+
 * Sample content from Travel website.
 
 * Preview in devices - simple demo.
-
+2023-05-24
+Added Demo mode. Starts without Tours and Assets - you click the heaader to get them.
 2023-05-20
-
+* Hilighting color? (Able to do it for drop target.)
+* If item goes to negative Z - pop it out. (click-listen.js tick)
 
 2023-05-01
 

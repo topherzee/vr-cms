@@ -109,6 +109,31 @@ AFRAME.registerComponent("mover", {
 
       if (hoverEl) {
         that.startDrag(this, null);
+        return;
+      }
+
+      // Check for top nav
+      let el = getIntersectedItemWithClass(this, "top-nav");
+      if (el) {
+        console.log("CLICK ON TOP NAV");
+
+        if (DEMO_STATE == 0) {
+          let assetsEl = document.getElementById("assetsHolder");
+          if (assetsEl) {
+            assetsEl.setAttribute("visible", true);
+          }
+          DEMO_STATE++;
+          return;
+        }
+
+        if (DEMO_STATE == 1) {
+          let toursEl = document.getElementById("toursHolder");
+          if (toursEl) {
+            toursEl.setAttribute("visible", true);
+          }
+          DEMO_STATE++;
+          return;
+        }
       }
 
       //that.setHover(hoverEl);

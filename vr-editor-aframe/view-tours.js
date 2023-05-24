@@ -3,7 +3,7 @@ let ITEM_HEIGHT_TOURS = 0.025;
 let PANEL_WIDTH_TOURS = 0.4;
 
 let APP_POSITION_TOURS = {
-  x: SCREEN_WIDTH / 2 + PANEL_WIDTH_TOURS / 2 + MARGIN * 3,
+  x: SCREEN_WIDTH / 2 + PANEL_WIDTH_TOURS / 2 + MARGIN * 20,
   y: SCREEN_Y - APP_HEIGHT / 2,
   z: SCREEN_Z,
 };
@@ -21,6 +21,11 @@ AFRAME.registerComponent("view-tours", {
       PANEL_WIDTH_TOURS,
       APP_HEIGHT
     );
+
+    if (DO_DEMO) {
+      let toursEl = document.getElementById("toursHolder");
+      toursEl.setAttribute("visible", false);
+    }
 
     var x = -PANEL_WIDTH_TOURS / 2 + APP_HEADER_WIDTH / 2;
     var y = APP_HEIGHT / 2 - APP_HEADER_HEIGHT / 2;
